@@ -1,1 +1,1 @@
-web: gunicorn emp_app.wsgi --log-file -
+web: gunicorn office_emp_mgmt_proj.wsgi --log-file -
