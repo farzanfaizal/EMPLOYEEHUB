@@ -1,69 +1,304 @@
-<!doctype html>
+{% load static %}
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>OEMS - Employees</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
-    <style>
-      .AED {
-        text-decoration: underline;
-        text-underline-offset: 0.5rem;
-        text-decoration-thickness: 0.15rem;
-      }
-      h1 {
-        color: white;
-        text-shadow: 2px 2px 4px #000000;
-        text-align: center;
-        margin-top: 1rem;
-      }
-      .table-container {
-        overflow-x: auto; /* Makes table horizontally scrollable on small screens */
-      }
-    </style>
-  </head>
-  
-  <body class="bg-dark text-white">
-    <div class="container">
-      <h1>Team Members</h1>
-      
-      <!-- Table Container for Responsiveness -->
-      <div class="table-container">
-        <table class="table my-4 table-dark table-hover table-bordered table-striped">
-          <thead class="thead-light">
-            <tr>
-              <th scope="col">ID</th>
-              <th scope="col">Firstname</th>
-              <th scope="col">Lastname</th>
-              <th scope="col">Dept.</th>
-              <th scope="col">Role</th>
-              <th scope="col">Salary</th>
-              <th scope="col">Bonus</th>
-              <th scope="col">Contact</th>
-              <th scope="col">Loc</th>
-              <th scope="col">DOJ</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for emp in emps %}
-            <tr>
-              <th scope="row">{{emp.emp_id}}</th>
-              <td>{{emp.first_name}}</td>
-              <td>{{emp.last_name}}</td>
-              <td>{{emp.dept.name}}</td>
-              <td>{{emp.role.name}}</td>
-              <td>{{emp.salary}}</td>
-              <td>{{emp.bonus}}</td>
-              <td>{{emp.phone_num}}</td>
-              <td>{{emp.dept.location}}</td>
-              <td>{{emp.hire_date}}</td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
-    </div>
-    
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
-  </body>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Employees - EmployeeHub</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'emp_app/images/favicon-32x32.png' %}">
+
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'emp_app/css/main.css' %}">
+</head>
+<body>
+    <!-- Messages -->
+    {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-modern alert-dismissible fade show m-3" role="alert" style="position: fixed; top: 20px; right: 20px; z-index: 9999; min-width: 300px;">
+            <strong>{{ message }}</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-custom">
+        <div class="container">
+            <a class="navbar-brand-custom" href="/">
+                <img src="{% static 'emp_app/images/ehub.png' %}" alt="Logo" width="40" height="40">
+                <span>EmployeeHub</span>
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link-custom" href="/">
+                            <i class="fas fa-home me-1"></i> Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link-custom active" href="/all-emp">
+                            <i class="fas fa-users me-1"></i> Employees
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link-custom" href="/add-emp">
+                            <i class="fas fa-user-plus me-1"></i> Add
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link-custom" href="/remove-emp">
+                            <i class="fas fa-user-minus me-1"></i> Remove
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link-custom" href="/employees">
+                            <i class="fas fa-edit me-1"></i> Update
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link-custom" href="/filter-emp">
+                            <i class="fas fa-filter me-1"></i> Filter
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header Section -->
+    <section class="page-container mt-4">
+        <div class="text-center mb-4">
+            <h1 class="section-title">Our Team Members</h1>
+            <p class="section-subtitle">Meet the talented individuals driving our success</p>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="search-bar mb-4">
+            <input type="text" class="search-input" id="employeeSearch" placeholder="Search employees by name, department, or role...">
+            <i class="fas fa-search search-icon"></i>
+        </div>
+
+        <!-- View Toggle -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <span class="text-muted">Total Employees: <strong>{{ emps|length }}</strong></span>
+            </div>
+            <div class="btn-group" role="group">
+                <button type="button" class="btn btn-sm btn-outline-gradient active" id="cardView">
+                    <i class="fas fa-th me-1"></i> Cards
+                </button>
+                <button type="button" class="btn btn-sm btn-outline-gradient" id="tableView">
+                    <i class="fas fa-table me-1"></i> Table
+                </button>
+            </div>
+        </div>
+
+        <!-- Card View -->
+        <div id="cardViewContainer">
+            <div class="row g-4">
+                {% for emp in emps %}
+                <div class="col-lg-4 col-md-6 searchable-item" data-search="{{ emp.first_name|lower }} {{ emp.last_name|lower }} {{ emp.dept.name|lower }} {{ emp.role.name|lower }}">
+                    <div class="employee-card">
+                        <div class="d-flex align-items-start mb-3">
+                            <div class="employee-avatar me-3">
+                                {{ emp.first_name|first }}{{ emp.last_name|first }}
+                            </div>
+                            <div class="flex-grow-1">
+                                <div class="employee-name">{{ emp.first_name }} {{ emp.last_name }}</div>
+                                <div class="employee-role">{{ emp.role.name }}</div>
+                                <span class="employee-dept">{{ emp.dept.name }}</span>
+                            </div>
+                        </div>
+
+                        <div class="row g-2 mb-3">
+                            <div class="col-6">
+                                <div style="background: #f7fafc; padding: 0.75rem; border-radius: 0.5rem;">
+                                    <div style="font-size: 0.75rem; color: #718096; margin-bottom: 0.25rem;">Salary</div>
+                                    <div style="font-weight: 600; color: #667eea;">${{ emp.salary|floatformat:0 }}</div>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div style="background: #f7fafc; padding: 0.75rem; border-radius: 0.5rem;">
+                                    <div style="font-size: 0.75rem; color: #718096; margin-bottom: 0.25rem;">Bonus</div>
+                                    <div style="font-weight: 600; color: #43e97b;">${{ emp.bonus|floatformat:0 }}</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center pt-3" style="border-top: 1px solid #e2e8f0;">
+                            <div>
+                                <i class="fas fa-phone-alt me-1" style="color: #667eea;"></i>
+                                <span style="font-size: 0.875rem;">{{ emp.phone_num }}</span>
+                            </div>
+                            <div>
+                                <i class="fas fa-map-marker-alt me-1" style="color: #f5576c;"></i>
+                                <span style="font-size: 0.875rem;">{{ emp.dept.location }}</span>
+                            </div>
+                        </div>
+
+                        <div class="mt-3">
+                            <small style="color: #718096;">
+                                <i class="fas fa-calendar-alt me-1"></i>
+                                Joined: {{ emp.hire_date|date:"M d, Y" }}
+                            </small>
+                        </div>
+
+                        <div class="mt-3 d-flex gap-2">
+                            <a href="{% url 'update_emp' emp.emp_id %}" class="btn btn-sm btn-gradient flex-grow-1">
+                                <i class="fas fa-edit me-1"></i> Edit
+                            </a>
+                            <button onclick="confirmDelete({{ emp.emp_id }}, '{{ emp.first_name }} {{ emp.last_name }}')" class="btn btn-sm" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; border: none;">
+                                <i class="fas fa-trash me-1"></i> Delete
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-12">
+                    <div class="text-center py-5">
+                        <i class="fas fa-users fa-4x mb-3" style="color: #cbd5e0;"></i>
+                        <h3>No Employees Found</h3>
+                        <p class="text-muted">Start by adding your first employee!</p>
+                        <a href="/add-emp" class="btn btn-gradient mt-3">
+                            <i class="fas fa-plus me-2"></i> Add Employee
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Table View (Hidden by default) -->
+        <div id="tableViewContainer" style="display: none;">
+            <div class="table-responsive">
+                <table class="table-modern">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Employee</th>
+                            <th>Department</th>
+                            <th>Role</th>
+                            <th>Salary</th>
+                            <th>Bonus</th>
+                            <th>Contact</th>
+                            <th>Location</th>
+                            <th>Hire Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for emp in emps %}
+                        <tr class="searchable-item" data-search="{{ emp.first_name|lower }} {{ emp.last_name|lower }} {{ emp.dept.name|lower }} {{ emp.role.name|lower }}">
+                            <td><strong>#{{ emp.emp_id }}</strong></td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div style="width: 35px; height: 35px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; margin-right: 0.75rem;">
+                                        {{ emp.first_name|first }}{{ emp.last_name|first }}
+                                    </div>
+                                    <div>
+                                        <div style="font-weight: 600;">{{ emp.first_name }} {{ emp.last_name }}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>{{ emp.dept.name }}</td>
+                            <td>{{ emp.role.name }}</td>
+                            <td><strong style="color: #667eea;">${{ emp.salary|floatformat:0 }}</strong></td>
+                            <td><strong style="color: #43e97b;">${{ emp.bonus|floatformat:0 }}</strong></td>
+                            <td>{{ emp.phone_num }}</td>
+                            <td>{{ emp.dept.location }}</td>
+                            <td>{{ emp.hire_date|date:"M d, Y" }}</td>
+                            <td>
+                                <div class="d-flex gap-2">
+                                    <a href="{% url 'update_emp' emp.emp_id %}" class="btn btn-sm btn-gradient" title="Edit">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <button onclick="confirmDelete({{ emp.emp_id }}, '{{ emp.first_name }} {{ emp.last_name }}')" class="btn btn-sm" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; border: none;" title="Delete">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer-modern mt-5">
+        <div class="container">
+            <div class="text-center">
+                <p style="opacity: 0.8; margin: 0;">&copy; 2024 EmployeeHub. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'emp_app/js/main.js' %}"></script>
+
+    <script>
+        // View Toggle
+        const cardView = document.getElementById('cardView');
+        const tableView = document.getElementById('tableView');
+        const cardViewContainer = document.getElementById('cardViewContainer');
+        const tableViewContainer = document.getElementById('tableViewContainer');
+
+        cardView.addEventListener('click', () => {
+            cardViewContainer.style.display = 'block';
+            tableViewContainer.style.display = 'none';
+            cardView.classList.add('active');
+            tableView.classList.remove('active');
+        });
+
+        tableView.addEventListener('click', () => {
+            cardViewContainer.style.display = 'none';
+            tableViewContainer.style.display = 'block';
+            tableView.classList.add('active');
+            cardView.classList.remove('active');
+        });
+
+        // Search Functionality
+        const searchInput = document.getElementById('employeeSearch');
+        const searchableItems = document.querySelectorAll('.searchable-item');
+
+        searchInput.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+
+            searchableItems.forEach(item => {
+                const searchData = item.dataset.search;
+
+                if (searchData.includes(searchTerm)) {
+                    item.style.display = '';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        });
+
+        // Delete Confirmation
+        function confirmDelete(empId, empName) {
+            if (confirm(`Are you sure you want to delete ${empName}?`)) {
+                window.location.href = `/remove-emp/${empId}`;
+            }
+        }
+    </script>
+</body>
 </html>

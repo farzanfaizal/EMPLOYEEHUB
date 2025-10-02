@@ -1,45 +1,91 @@
+{% load static %}
 <!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title></title>
-        <meta name="description" content="">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
- 
-        <link rel="stylesheet" href="">
-        <style>
-            h1 {
-                position:relative;
-                top:8px;
-                color: white;
-                text-shadow: 2px 2px 4px #000000;
-                text-decoration:none;
-                text-align:center;
-              }
-        </style>
-    </head>
-    <body>
-        <h1>Employees List</h1>
-<table class="table my-4 table-dark table-hover">
-    <tr>
-        <th>First Name</th>
-        <th>Last Name</th>
-        <th>Department</th>
-        <th>Role</th>
-        <th>Update</th>
-    </tr>
-    {% for emp in emps %}
-    <tr>
-        <td>{{ emp.first_name }}</td>
-        <td>{{ emp.last_name }}</td>
-        <td>{{ emp.dept.name }}</td>
-        <td>{{ emp.role.name }}</td>
-        <td><a href="{% url 'update_emp' emp.emp_id %}">Update</a></td>
-    </tr>
-    {% endfor %}
-</table>
- 
-    </body>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee List - EmployeeHub</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'emp_app/images/favicon-32x32.png' %}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'emp_app/css/main.css' %}">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-custom">
+        <div class="container">
+            <a class="navbar-brand-custom" href="/">
+                <img src="{% static 'emp_app/images/ehub.png' %}" alt="Logo" width="40" height="40">
+                <span>EmployeeHub</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link-custom" href="/"><i class="fas fa-home me-1"></i> Home</a></li>
+                    <li class="nav-item"><a class="nav-link-custom" href="/all-emp"><i class="fas fa-users me-1"></i> Employees</a></li>
+                    <li class="nav-item"><a class="nav-link-custom" href="/add-emp"><i class="fas fa-user-plus me-1"></i> Add</a></li>
+                    <li class="nav-item"><a class="nav-link-custom" href="/remove-emp"><i class="fas fa-user-minus me-1"></i> Remove</a></li>
+                    <li class="nav-item"><a class="nav-link-custom active" href="/employees"><i class="fas fa-edit me-1"></i> Update</a></li>
+                    <li class="nav-item"><a class="nav-link-custom" href="/filter-emp"><i class="fas fa-filter me-1"></i> Filter</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <section class="page-container mt-4">
+        <div class="text-center mb-4">
+            <h1 class="section-title">Select Employee to Update</h1>
+            <p class="section-subtitle">Click on any employee to edit their details</p>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table-modern">
+                <thead>
+                    <tr>
+                        <th>Employee</th>
+                        <th>Department</th>
+                        <th>Role</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for emp in emps %}
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="employee-avatar me-3" style="width: 40px; height: 40px; font-size: 1rem;">
+                                    {{ emp.first_name|first }}{{ emp.last_name|first }}
+                                </div>
+                                <div>
+                                    <div style="font-weight: 600;">{{ emp.first_name }} {{ emp.last_name }}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>{{ emp.dept.name }}</td>
+                        <td>{{ emp.role.name }}</td>
+                        <td>
+                            <a href="{% url 'update_emp' emp.emp_id %}" class="btn btn-sm btn-gradient">
+                                <i class="fas fa-edit me-1"></i> Update
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <footer class="footer-modern mt-5">
+        <div class="container">
+            <div class="text-center">
+                <p style="opacity: 0.8; margin: 0;">&copy; 2024 EmployeeHub. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'emp_app/js/main.js' %}"></script>
+</body>
 </html>
