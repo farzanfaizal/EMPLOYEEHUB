@@ -320,14 +320,20 @@ body {
     background: var(--primary-gradient);
     color: white;
     border: none;
-    padding: 0.75rem 2rem;
-    border-radius: var(--radius-full);
+    padding: 0.875rem 2.5rem;
+    border-radius: var(--radius-md);
     font-weight: 600;
     cursor: pointer;
     transition: all var(--transition-base);
     position: relative;
     overflow: hidden;
     box-shadow: var(--shadow-md);
+    text-align: center;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    letter-spacing: 0.025em;
 }
 
 .btn-gradient::before {
@@ -370,13 +376,18 @@ body {
     background: transparent;
     color: var(--primary-color);
     border: 2px solid var(--primary-color);
-    padding: 0.75rem 2rem;
-    border-radius: var(--radius-full);
+    padding: 0.875rem 2.5rem;
+    border-radius: var(--radius-md);
     font-weight: 600;
     cursor: pointer;
     transition: all var(--transition-base);
     position: relative;
     overflow: hidden;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    letter-spacing: 0.025em;
 }
 
 .btn-outline-gradient::before {
@@ -951,6 +962,102 @@ body {
     max-width: 1400px;
     margin: 0 auto;
     padding: 2rem;
+}
+
+/* ============================================
+   Corporate Button Styles
+   ============================================ */
+
+.btn-corporate {
+    padding: 0.875rem 2rem;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-size: 0.875rem;
+    transition: all var(--transition-base);
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-width: 140px;
+}
+
+.btn-corporate-primary {
+    background: var(--primary-gradient);
+    color: white;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.btn-corporate-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+}
+
+.btn-corporate-secondary {
+    background: white;
+    color: var(--primary-color);
+    border: 2px solid var(--primary-color);
+}
+
+.btn-corporate-secondary:hover {
+    background: var(--primary-color);
+    color: white;
+    transform: translateY(-2px);
+}
+
+.btn-corporate-danger {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(245, 87, 108, 0.3);
+}
+
+.btn-corporate-danger:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(245, 87, 108, 0.4);
+}
+
+.btn-corporate-success {
+    background: var(--success-gradient);
+    color: white;
+    box-shadow: 0 4px 12px rgba(67, 233, 123, 0.3);
+}
+
+.btn-corporate-success:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(67, 233, 123, 0.4);
+}
+
+/* Button Groups */
+.btn-group-corporate {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.btn-group-corporate.justify-end {
+    justify-content: flex-end;
+}
+
+.btn-group-corporate.justify-center {
+    justify-content: center;
+}
+
+.btn-group-corporate.justify-between {
+    justify-content: space-between;
+}
+
+/* Form Button Container */
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 2px solid var(--border-color);
 }
 
 .section-title {

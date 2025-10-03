@@ -1,0 +1,139 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mark Attendance - EmployeeHub</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'emp_app/images/favicon-32x32.png' %}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'emp_app/css/main.css' %}">
+</head>
+<body>
+    {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-modern alert-dismissible fade show m-3" role="alert" style="position: fixed; top: 20px; right: 20px; z-index: 9999; min-width: 300px;">
+            <strong>{{ message }}</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        {% endfor %}
+    {% endif %}
+
+    <nav class="navbar navbar-expand-lg navbar-custom">
+        <div class="container">
+            <a class="navbar-brand-custom" href="/">
+                <img src="{% static 'emp_app/images/ehub.png' %}" alt="Logo" width="40" height="40">
+                <span>EmployeeHub</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link-custom" href="/"><i class="fas fa-home me-1"></i> Home</a></li>
+                    <li class="nav-item"><a class="nav-link-custom" href="/all-emp"><i class="fas fa-users me-1"></i> Employees</a></li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link-custom active dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-calendar-check me-1"></i> Attendance
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="/attendance/mark">Mark Attendance</a></li>
+                            <li><a class="dropdown-item" href="/attendance/view">View Attendance</a></li>
+                            <li><a class="dropdown-item" href="/attendance/report">Reports</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="/attendance/apply-leave">Apply Leave</a></li>
+                            <li><a class="dropdown-item" href="/attendance/leaves">View Leaves</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <section class="page-container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="text-center mb-4">
+                    <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem;">
+                        <i class="fas fa-calendar-check fa-2x" style="color: white;"></i>
+                    </div>
+                    <h1 class="section-title mb-2">Mark Attendance</h1>
+                    <p class="section-subtitle">Record employee attendance for {{ today|date:"F d, Y" }}</p>
+                </div>
+
+                <div class="form-modern animate-fade-in-up">
+                    <form method="POST" action="">
+                        {% csrf_token %}
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label class="form-label-modern"><i class="fas fa-user me-1"></i> Employee *</label>
+                                <select name="employee" class="form-select form-select-modern" required>
+                                    <option value="" selected>Select Employee</option>
+                                    {% for emp in employees %}
+                                    <option value="{{ emp.emp_id }}">{{ emp.first_name }} {{ emp.last_name }} - {{ emp.dept.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label-modern"><i class="fas fa-calendar me-1"></i> Date *</label>
+                                <input type="date" name="date" value="{{ today|date:'Y-m-d' }}" class="form-control form-control-modern" required>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label-modern"><i class="fas fa-clipboard-check me-1"></i> Status *</label>
+                                <select name="status" class="form-select form-select-modern" required>
+                                    <option value="present">Present</option>
+                                    <option value="absent">Absent</option>
+                                    <option value="half_day">Half Day</option>
+                                    <option value="late">Late</option>
+                                    <option value="work_from_home">Work From Home</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label-modern"><i class="fas fa-clock me-1"></i> Check-In Time</label>
+                                <input type="time" name="check_in_time" class="form-control form-control-modern">
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label-modern"><i class="fas fa-clock me-1"></i> Check-Out Time</label>
+                                <input type="time" name="check_out_time" class="form-control form-control-modern">
+                            </div>
+
+                            <div class="col-12">
+                                <label class="form-label-modern"><i class="fas fa-note-sticky me-1"></i> Notes</label>
+                                <textarea name="notes" class="form-control form-control-modern" rows="3" placeholder="Additional notes (optional)"></textarea>
+                            </div>
+
+                            <div class="col-12">
+                                <div class="form-actions">
+                                    <a href="/" class="btn-corporate btn-corporate-secondary">
+                                        <i class="fas fa-times me-1"></i> Cancel
+                                    </a>
+                                    <button type="submit" class="btn-corporate btn-corporate-success">
+                                        <i class="fas fa-check me-1"></i> Mark Attendance
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer-modern mt-5">
+        <div class="container">
+            <div class="text-center">
+                <p style="opacity: 0.8; margin: 0;">&copy; 2024 EmployeeHub. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'emp_app/js/main.js' %}"></script>
+</body>
+</html>

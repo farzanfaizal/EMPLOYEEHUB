@@ -1,0 +1,150 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Leaves - EmployeeHub</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'emp_app/images/favicon-32x32.png' %}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'emp_app/css/main.css' %}">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-custom">
+        <div class="container">
+            <a class="navbar-brand-custom" href="/">
+                <img src="{% static 'emp_app/images/ehub.png' %}" alt="Logo" width="40" height="40">
+                <span>EmployeeHub</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link-custom" href="/"><i class="fas fa-home me-1"></i> Home</a></li>
+                    <li class="nav-item"><a class="nav-link-custom" href="/all-emp"><i class="fas fa-users me-1"></i> Employees</a></li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link-custom active dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-calendar-check me-1"></i> Attendance
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="/attendance/mark">Mark Attendance</a></li>
+                            <li><a class="dropdown-item" href="/attendance/view">View Attendance</a></li>
+                            <li><a class="dropdown-item" href="/attendance/report">Reports</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="/attendance/apply-leave">Apply Leave</a></li>
+                            <li><a class="dropdown-item" href="/attendance/leaves">View Leaves</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <section class="page-container mt-4">
+        <div class="text-center mb-4">
+            <h1 class="section-title">Leave Applications</h1>
+            <p class="section-subtitle">Manage employee leave requests</p>
+        </div>
+
+        <div class="btn-group-corporate justify-between mb-4">
+            <div class="btn-group">
+                <a href="/attendance/leaves" class="btn-corporate {% if not request.GET.status %}btn-corporate-primary{% else %}btn-corporate-secondary{% endif %}">All</a>
+                <a href="/attendance/leaves?status=pending" class="btn-corporate {% if request.GET.status == 'pending' %}btn-corporate-primary{% else %}btn-corporate-secondary{% endif %}">Pending</a>
+                <a href="/attendance/leaves?status=approved" class="btn-corporate {% if request.GET.status == 'approved' %}btn-corporate-success{% else %}btn-corporate-secondary{% endif %}">Approved</a>
+                <a href="/attendance/leaves?status=rejected" class="btn-corporate {% if request.GET.status == 'rejected' %}btn-corporate-danger{% else %}btn-corporate-secondary{% endif %}">Rejected</a>
+            </div>
+            <a href="/attendance/apply-leave" class="btn-corporate btn-corporate-primary">
+                <i class="fas fa-plus me-1"></i> New Leave
+            </a>
+        </div>
+
+        {% if leaves %}
+        <div class="row g-4">
+            {% for leave in leaves %}
+            <div class="col-md-6">
+                <div class="card-modern">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div class="d-flex align-items-center">
+                            <div class="employee-avatar me-3">
+                                {{ leave.employee.first_name|first }}{{ leave.employee.last_name|first }}
+                            </div>
+                            <div>
+                                <h5 style="font-weight: 700; margin: 0;">{{ leave.employee.first_name }} {{ leave.employee.last_name }}</h5>
+                                <small style="color: #718096;">{{ leave.employee.dept.name }}</small>
+                            </div>
+                        </div>
+                        {% if leave.status == 'pending' %}
+                        <span class="badge-gradient" style="background: linear-gradient(135deg, #ffa726 0%, #fb8c00 100%);">Pending</span>
+                        {% elif leave.status == 'approved' %}
+                        <span class="badge-gradient" style="background: var(--success-gradient);">Approved</span>
+                        {% elif leave.status == 'rejected' %}
+                        <span class="badge-gradient" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">Rejected</span>
+                        {% endif %}
+                    </div>
+
+                    <div class="row g-2 mb-3">
+                        <div class="col-6">
+                            <small style="color: #718096;">Leave Type</small>
+                            <div style="font-weight: 600;">{{ leave.get_leave_type_display }}</div>
+                        </div>
+                        <div class="col-6">
+                            <small style="color: #718096;">Duration</small>
+                            <div style="font-weight: 600;">{{ leave.total_days }} days</div>
+                        </div>
+                        <div class="col-6">
+                            <small style="color: #718096;">From</small>
+                            <div style="font-weight: 600;">{{ leave.start_date|date:"M d, Y" }}</div>
+                        </div>
+                        <div class="col-6">
+                            <small style="color: #718096;">To</small>
+                            <div style="font-weight: 600;">{{ leave.end_date|date:"M d, Y" }}</div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <small style="color: #718096;">Reason</small>
+                        <p style="margin: 0;">{{ leave.reason }}</p>
+                    </div>
+
+                    {% if leave.status == 'pending' %}
+                    <form method="POST" action="{% url 'approve-leave' leave.id %}" class="btn-group-corporate">
+                        {% csrf_token %}
+                        <button type="submit" name="action" value="approve" class="btn-corporate btn-corporate-success">
+                            <i class="fas fa-check me-1"></i> Approve
+                        </button>
+                        <button type="submit" name="action" value="reject" class="btn-corporate btn-corporate-danger">
+                            <i class="fas fa-times me-1"></i> Reject
+                        </button>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-5">
+            <i class="fas fa-clipboard-list fa-4x mb-3" style="color: #cbd5e0;"></i>
+            <h3>No Leave Applications</h3>
+            <p class="text-muted">There are no leave applications to display</p>
+            <a href="/attendance/apply-leave" class="btn-corporate btn-corporate-primary mt-3">
+                <i class="fas fa-plus me-1"></i> Apply for Leave
+            </a>
+        </div>
+        {% endif %}
+    </section>
+
+    <footer class="footer-modern mt-5">
+        <div class="container">
+            <div class="text-center">
+                <p style="opacity: 0.8; margin: 0;">&copy; 2024 EmployeeHub. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'emp_app/js/main.js' %}"></script>
+</body>
+</html>
