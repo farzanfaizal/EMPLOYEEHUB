@@ -1,137 +1,188 @@
+{% extends 'base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Remove Employee - EmployeeHub</title>
-    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'emp_app/images/favicon-32x32.png' %}">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'emp_app/css/main.css' %}">
-    <script src="https://code.jquery.com/jquery-3.6.3.js"></script>
-</head>
-<body>
-    {% if messages %}
-        {% for message in messages %}
-        <div class="alert alert-{{ message.tags }} alert-modern alert-dismissible fade show m-3" role="alert" style="position: fixed; top: 20px; right: 20px; z-index: 9999; min-width: 300px;">
-            <strong>{{ message }}</strong>
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-        {% endfor %}
-    {% endif %}
 
-    <nav class="navbar navbar-expand-lg navbar-custom">
-        <div class="container">
-            <a class="navbar-brand-custom" href="/">
-                <img src="{% static 'emp_app/images/ehub.png' %}" alt="Logo" width="40" height="40">
-                <span>EmployeeHub</span>
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link-custom" href="/"><i class="fas fa-home me-1"></i> Home</a></li>
-                    <li class="nav-item"><a class="nav-link-custom" href="/all-emp"><i class="fas fa-users me-1"></i> Employees</a></li>
-                    <li class="nav-item"><a class="nav-link-custom" href="/add-emp"><i class="fas fa-user-plus me-1"></i> Add</a></li>
-                    <li class="nav-item"><a class="nav-link-custom active" href="/remove-emp"><i class="fas fa-user-minus me-1"></i> Remove</a></li>
-                    <li class="nav-item"><a class="nav-link-custom" href="/employees"><i class="fas fa-edit me-1"></i> Update</a></li>
-                    <li class="nav-item"><a class="nav-link-custom" href="/filter-emp"><i class="fas fa-filter me-1"></i> Filter</a></li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+{% block title %}Remove Employee - EmployeeHub{% endblock %}
+{% block nav_remove %}active{% endblock %}
 
-    <section class="page-container mt-5">
-        <div class="row justify-content-center">
-            <div class="col-lg-8">
-                <div class="text-center mb-4">
-                    <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem;">
-                        <i class="fas fa-user-minus fa-2x" style="color: white;"></i>
+{% block breadcrumb %}
+<div class="breadcrumb-modern">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/"><i class="fas fa-home me-1"></i>Home</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Remove Employee</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://code.jquery.com/jquery-3.6.3.js"></script>
+<script>
+$('#getempform').submit(function (event) {
+    event.preventDefault();
+    const btn = $(this).find('button[type="submit"]');
+
+    // Add loading state
+    btn.addClass('btn-loading');
+    btn.prop('disabled', true);
+
+    var formData = {
+        'emp_id': $('input[name=emp-id]').val(),
+        'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val()
+    };
+
+    $.ajax({
+        type: 'POST',
+        url: '/remove-emp',
+        data: formData,
+        encode: true
+    }).done(function (data) {
+        data = JSON.parse(data);
+        $('#emp-table').empty();
+
+        if (data['status'] == 'success') {
+            let mystr = `
+                <div class="card-modern animate-fade-in-up">
+                    <div class="alert alert-warning" role="alert">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <strong>Warning:</strong> This action cannot be undone.
                     </div>
-                    <h1 class="section-title mb-2">Remove Employee</h1>
-                    <p class="section-subtitle">Enter employee ID to preview and remove</p>
-                </div>
-
-                <div class="form-modern animate-fade-in-up">
-                    <form id="getempform" method="POST" action="">
-                        {% csrf_token %}
-                        <div class="row g-3">
-                            <div class="col-12">
-                                <label class="form-label-modern"><i class="fas fa-id-badge me-1"></i> Employee ID</label>
-                                <input type="number" name="emp-id" class="form-control form-control-modern" placeholder="Enter employee ID" required>
-                            </div>
-                            <div class="col-12">
-                                <button type="submit" class="btn btn-gradient w-100">
-                                    <i class="fas fa-search me-2"></i> Find Employee
-                                </button>
+                    <h5 style="font-weight: 700; margin-bottom: 1.5rem; color: var(--text-primary);">
+                        <i class="fas fa-user-circle me-2"></i>Employee Details
+                    </h5>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="info-card">
+                                <div class="info-card-title">Employee ID</div>
+                                <div class="info-card-value">#${data['empID']}</div>
                             </div>
                         </div>
-                    </form>
-                </div>
-
-                <div id="emp-table" class="mt-4"></div>
-            </div>
-        </div>
-    </section>
-
-    <footer class="footer-modern mt-5">
-        <div class="container">
-            <div class="text-center">
-                <p style="opacity: 0.8; margin: 0;">&copy; 2024 EmployeeHub. All rights reserved.</p>
-            </div>
-        </div>
-    </footer>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="{% static 'emp_app/js/main.js' %}"></script>
-    <script>
-        $('#getempform').submit(function (event) {
-            event.preventDefault();
-            var formData = {
-                'emp_id': $('input[name=emp-id]').val(),
-                'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val()
-            };
-
-            $.ajax({
-                type: 'POST',
-                url: '/remove-emp',
-                data: formData,
-                encode: true
-            }).done(function (data) {
-                data = JSON.parse(data)
-                $('#emp-table').empty();
-
-                if (data['status'] == 'success') {
-                    let mystr = `
-                        <div class="card-modern animate-fade-in-up">
-                            <h5 style="font-weight: 700; margin-bottom: 1rem;">Employee Details</h5>
-                            <div class="row g-3">
-                                <div class="col-md-6"><strong>ID:</strong> ${data['empID']}</div>
-                                <div class="col-md-6"><strong>Name:</strong> ${data['firstname']} ${data['lastname']}</div>
-                                <div class="col-md-6"><strong>Department:</strong> ${data['dept']}</div>
-                                <div class="col-md-6"><strong>Role:</strong> ${data['role']}</div>
-                                <div class="col-md-6"><strong>Salary:</strong> $${data['salary']}</div>
-                                <div class="col-md-6"><strong>Bonus:</strong> $${data['bonus']}</div>
-                                <div class="col-md-6"><strong>Phone:</strong> ${data['phone']}</div>
-                                <div class="col-md-6"><strong>Location:</strong> ${data['location']}</div>
-                                <div class="col-12"><strong>Hire Date:</strong> ${data['hire_date']}</div>
+                        <div class="col-md-6">
+                            <div class="info-card">
+                                <div class="info-card-title">Full Name</div>
+                                <div class="info-card-value">${data['firstname']} ${data['lastname']}</div>
                             </div>
-                            <form action="/remove-emp/${data['empID']}" method="post" class="mt-4">
-                                {% csrf_token %}
-                                <button type="submit" class="btn w-100" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; border: none;">
-                                    <i class="fas fa-trash me-2"></i> Confirm Removal
-                                </button>
-                            </form>
-                        </div>`;
-                    $('#emp-table').append(mystr);
-                } else {
-                    $('#emp-table').append('<div class="card-modern text-center"><i class="fas fa-exclamation-circle fa-3x mb-3" style="color: #f5576c;"></i><h5>Employee Not Found!</h5></div>');
-                }
-            });
-        });
-    </script>
-</body>
-</html>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="info-card">
+                                <div class="info-card-title">Department</div>
+                                <div class="info-card-value">${data['dept']}</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="info-card">
+                                <div class="info-card-title">Role</div>
+                                <div class="info-card-value">${data['role']}</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="info-card" style="border-left-color: #43e97b;">
+                                <div class="info-card-title">Salary</div>
+                                <div class="info-card-value" style="color: #43e97b;">$${data['salary']}</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="info-card" style="border-left-color: #4facfe;">
+                                <div class="info-card-title">Bonus</div>
+                                <div class="info-card-value" style="color: #4facfe;">$${data['bonus']}</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="info-card">
+                                <div class="info-card-title">Phone Number</div>
+                                <div class="info-card-value">${data['phone']}</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="info-card">
+                                <div class="info-card-title">Location</div>
+                                <div class="info-card-value">${data['location']}</div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="info-card">
+                                <div class="info-card-title">Hire Date</div>
+                                <div class="info-card-value">${data['hire_date']}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <form action="/remove-emp/${data['empID']}" method="post" class="mt-4">
+                        {% csrf_token %}
+                        <div class="form-actions">
+                            <a href="/all-emp" class="btn btn-outline-gradient">
+                                <i class="fas fa-times me-2"></i> Cancel
+                            </a>
+                            <button type="submit" class="btn btn-corporate-danger">
+                                <i class="fas fa-trash me-2"></i> Confirm Removal
+                            </button>
+                        </div>
+                    </form>
+                </div>`;
+            $('#emp-table').append(mystr);
+        } else {
+            $('#emp-table').append(`
+                <div class="empty-state animate-fade-in-up">
+                    <div class="empty-state-icon" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white;">
+                        <i class="fas fa-exclamation-circle"></i>
+                    </div>
+                    <h3 class="empty-state-title">Employee Not Found!</h3>
+                    <p class="empty-state-description">No employee exists with the provided ID. Please check and try again.</p>
+                    <a href="/all-emp" class="btn btn-gradient">
+                        <i class="fas fa-users me-2"></i> View All Employees
+                    </a>
+                </div>
+            `);
+        }
+    }).fail(function() {
+        $('#emp-table').html(`
+            <div class="alert alert-danger" role="alert">
+                <i class="fas fa-exclamation-circle me-2"></i>
+                An error occurred. Please try again.
+            </div>
+        `);
+    }).always(function() {
+        btn.removeClass('btn-loading');
+        btn.prop('disabled', false);
+    });
+});
+</script>
+{% endblock %}
+
+{% block content %}
+<section class="page-container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="text-center mb-4">
+                <div class="animate-scale-in" style="width: 80px; height: 80px; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem;">
+                    <i class="fas fa-user-minus fa-2x" style="color: white;"></i>
+                </div>
+                <h1 class="section-title mb-2 animate-fade-in-down">Remove Employee</h1>
+                <p class="section-subtitle animate-fade-in-up">Enter employee ID to preview and remove</p>
+            </div>
+
+            <div class="form-modern animate-fade-in-up">
+                <form id="getempform" method="POST" action="">
+                    {% csrf_token %}
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label class="form-label-modern">
+                                <i class="fas fa-id-badge me-1"></i> Employee ID
+                            </label>
+                            <input type="number" name="emp-id" class="form-control form-control-modern" placeholder="Enter employee ID" required>
+                        </div>
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-gradient w-100">
+                                <i class="fas fa-search me-2"></i> Find Employee
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div id="emp-table" class="mt-4"></div>
+        </div>
+    </div>
+</section>
+{% endblock %}
