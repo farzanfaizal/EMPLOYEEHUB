@@ -92,3 +92,110 @@ class Leave(models.Model):
 
     def total_days(self):
         return (self.end_date - self.start_date).days + 1
+
+
+# Biometric Fingerprint Models
+class FingerprintData(models.Model):
+    """Store fingerprint biometric data for employees"""
+    employee = models.OneToOneField(Employee, on_delete=models.CASCADE, related_name='fingerprint')
+    fingerprint_template = models.TextField(help_text="Encoded fingerprint template data")
+    fingerprint_image = models.ImageField(upload_to='fingerprints/', null=True, blank=True, help_text="Optional fingerprint image")
+    enrolled_date = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+    device_id = models.CharField(max_length=100, blank=True, null=True, help_text="ID of the fingerprint device used")
+    is_active = models.BooleanField(default=True)
+    quality_score = models.IntegerField(default=0, help_text="Quality score of fingerprint (0-100)")
+
+    class Meta:
+        verbose_name = "Fingerprint Data"
+        verbose_name_plural = "Fingerprint Data"
+
+    def __str__(self):
+        return f"Fingerprint - {self.employee.first_name} {self.employee.last_name}"
+
+
+class BiometricAttendance(models.Model):
+    """Log attendance records from biometric fingerprint scans"""
+    STATUS_CHOICES = [
+        ('check_in', 'Check In'),
+        ('check_out', 'Check Out'),
+        ('break_start', 'Break Start'),
+        ('break_end', 'Break End'),
+    ]
+
+    employee = models.ForeignKey(Employee, on_delete=models.CASCADE, related_name='biometric_logs')
+    timestamp = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES)
+    device_id = models.CharField(max_length=100, help_text="ID of the fingerprint device")
+    location = models.CharField(max_length=200, blank=True, null=True)
+    confidence_score = models.IntegerField(default=100, help_text="Confidence score of fingerprint match (0-100)")
+    notes = models.TextField(blank=True, null=True)
+
+    class Meta:
+        ordering = ['-timestamp']
+        verbose_name = "Biometric Attendance Log"
+        verbose_name_plural = "Biometric Attendance Logs"
+
+    def __str__(self):
+        return f"{self.employee} - {self.status} - {self.timestamp.strftime('%Y-%m-%d %H:%M')}"
+
+
+# Document Management Models
+class DocumentCategory(models.Model):
+    """Categories for employee documents"""
+    name = models.CharField(max_length=100)
+    description = models.TextField(blank=True)
+    icon = models.CharField(max_length=50, default='fa-file', help_text="FontAwesome icon class")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "Document Category"
+        verbose_name_plural = "Document Categories"
+        ordering = ['name']
+
+    def __str__(self):
+        return self.name
+
+
+class EmployeeDocument(models.Model):
+    """Store employee-related documents"""
+    DOCUMENT_STATUS = [
+        ('active', 'Active'),
+        ('expired', 'Expired'),
+        ('archived', 'Archived'),
+    ]
+
+    employee = models.ForeignKey(Employee, on_delete=models.CASCADE, related_name='documents')
+    category = models.ForeignKey(DocumentCategory, on_delete=models.SET_NULL, null=True, related_name='documents')
+    title = models.CharField(max_length=200)
+    description = models.TextField(blank=True, null=True)
+    file = models.FileField(upload_to='employee_documents/%Y/%m/')
+    file_size = models.IntegerField(default=0, help_text="File size in bytes")
+    file_type = models.CharField(max_length=50, blank=True)
+    uploaded_by = models.CharField(max_length=100, help_text="User who uploaded the document")
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    expiry_date = models.DateField(null=True, blank=True, help_text="For documents that expire (e.g., contracts, certifications)")
+    status = models.CharField(max_length=20, choices=DOCUMENT_STATUS, default='active')
+    is_confidential = models.BooleanField(default=False)
+    notes = models.TextField(blank=True, null=True)
+
+    class Meta:
+        ordering = ['-uploaded_at']
+        verbose_name = "Employee Document"
+        verbose_name_plural = "Employee Documents"
+
+    def __str__(self):
+        return f"{self.employee} - {self.title}"
+
+    def is_expired(self):
+        if self.expiry_date:
+            from datetime import date
+            return date.today() > self.expiry_date
+        return False
+
+    def save(self, *args, **kwargs):
+        if self.file:
+            self.file_size = self.file.size
+            self.file_type = self.file.name.split('.')[-1].lower()
+        super().save(*args, **kwargs)

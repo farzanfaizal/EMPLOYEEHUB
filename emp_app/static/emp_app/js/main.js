@@ -426,7 +426,7 @@ function animateCountUp(element, target, duration = 2000) {
 
 // Initialize count up for stat cards
 document.querySelectorAll('.stat-value').forEach(stat => {
-    const target = parseInt(stat.textContent);
+    const target = parseInt(stat.getAttribute('data-target') || stat.textContent);
     if (!isNaN(target)) {
         stat.textContent = '0';
 

@@ -1,15 +1,38 @@
-from django.shortcuts import render, HttpResponse, redirect
-from emp_app.models import Employee, Department, Role, Attendance, Leave
+from django.shortcuts import render, HttpResponse, redirect, get_object_or_404
+from emp_app.models import (
+    Employee, Department, Role, Attendance, Leave,
+    FingerprintData, BiometricAttendance, DocumentCategory, EmployeeDocument
+)
 from django.contrib import messages
 import json
 from django.db.models import Q
 from datetime import date, datetime, timedelta
 from django.db.models import Count
+from django.http import JsonResponse, FileResponse
+from django.core.files.storage import default_storage
+import os
 
 # Create your views here.
 
 def index(request):
-    return render(request, 'index.html')
+    # Get statistics for the dashboard
+    total_employees = Employee.objects.count()
+    total_departments = Department.objects.count()
+    total_roles = Role.objects.count()
+
+    # Calculate growth rate based on employees hired in last 30 days
+    from datetime import date, timedelta
+    thirty_days_ago = date.today() - timedelta(days=30)
+    recent_hires = Employee.objects.filter(hire_date__gte=thirty_days_ago).count()
+    growth_rate = round((recent_hires / total_employees * 100) if total_employees > 0 else 0, 1)
+
+    context = {
+        'total_employees': total_employees,
+        'total_departments': total_departments,
+        'total_roles': total_roles,
+        'growth_rate': growth_rate
+    }
+    return render(request, 'index.html', context)
 
 def allEmp(request):
     emps = Employee.objects.all()
@@ -305,3 +328,482 @@ def approveLeave(request, leave_id):
             messages.error(request, "Leave not found")
 
     return redirect('/attendance/leaves')
+
+
+# ==========================================
+# FINGERPRINT BIOMETRIC MANAGEMENT VIEWS
+# ==========================================
+
+def fingerprintManagement(request):
+    """Main fingerprint management dashboard"""
+    employees = Employee.objects.all()
+    enrolled_count = FingerprintData.objects.filter(is_active=True).count()
+    not_enrolled = employees.count() - enrolled_count
+
+    fingerprints = FingerprintData.objects.select_related('employee').all()
+
+    context = {
+        'employees': employees,
+        'fingerprints': fingerprints,
+        'enrolled_count': enrolled_count,
+        'not_enrolled': not_enrolled,
+        'total_employees': employees.count()
+    }
+    return render(request, 'biometric/fingerprint_management.html', context)
+
+
+def enrollFingerprint(request):
+    """Enroll a new fingerprint for an employee"""
+    if request.method == 'POST':
+        employee_id = request.POST.get('employee')
+        fingerprint_template = request.POST.get('fingerprint_template')
+        device_id = request.POST.get('device_id', '')
+        quality_score = request.POST.get('quality_score', 0)
+        fingerprint_image = request.FILES.get('fingerprint_image')
+
+        try:
+            emp = Employee.objects.get(emp_id=employee_id)
+
+            # Check if fingerprint already exists
+            if FingerprintData.objects.filter(employee=emp).exists():
+                messages.warning(request, f"Fingerprint already enrolled for {emp.first_name} {emp.last_name}")
+                return redirect('/biometric/fingerprint')
+
+            # Create new fingerprint record
+            fingerprint = FingerprintData.objects.create(
+                employee=emp,
+                fingerprint_template=fingerprint_template,
+                device_id=device_id,
+                quality_score=quality_score,
+                fingerprint_image=fingerprint_image
+            )
+
+            messages.success(request, f"Fingerprint enrolled successfully for {emp.first_name} {emp.last_name}")
+            return redirect('/biometric/fingerprint')
+
+        except Employee.DoesNotExist:
+            messages.error(request, "Employee not found")
+            return redirect('/biometric/enroll')
+
+    # Get employees without fingerprints
+    enrolled_emp_ids = FingerprintData.objects.values_list('employee_id', flat=True)
+    available_employees = Employee.objects.exclude(emp_id__in=enrolled_emp_ids)
+
+    context = {'employees': available_employees}
+    return render(request, 'biometric/enroll_fingerprint.html', context)
+
+
+def updateFingerprint(request, fingerprint_id):
+    """Update existing fingerprint data"""
+    fingerprint = get_object_or_404(FingerprintData, id=fingerprint_id)
+
+    if request.method == 'POST':
+        fingerprint_template = request.POST.get('fingerprint_template')
+        device_id = request.POST.get('device_id')
+        quality_score = request.POST.get('quality_score', 0)
+        fingerprint_image = request.FILES.get('fingerprint_image')
+        is_active = request.POST.get('is_active') == 'on'
+
+        fingerprint.fingerprint_template = fingerprint_template
+        fingerprint.device_id = device_id
+        fingerprint.quality_score = quality_score
+        fingerprint.is_active = is_active
+
+        if fingerprint_image:
+            fingerprint.fingerprint_image = fingerprint_image
+
+        fingerprint.save()
+        messages.success(request, f"Fingerprint updated for {fingerprint.employee.first_name} {fingerprint.employee.last_name}")
+        return redirect('/biometric/fingerprint')
+
+    context = {'fingerprint': fingerprint}
+    return render(request, 'biometric/update_fingerprint.html', context)
+
+
+def deleteFingerprint(request, fingerprint_id):
+    """Delete fingerprint data"""
+    if request.method == 'POST':
+        try:
+            fingerprint = FingerprintData.objects.get(id=fingerprint_id)
+            emp_name = f"{fingerprint.employee.first_name} {fingerprint.employee.last_name}"
+            fingerprint.delete()
+            messages.success(request, f"Fingerprint removed for {emp_name}")
+        except FingerprintData.DoesNotExist:
+            messages.error(request, "Fingerprint data not found")
+
+    return redirect('/biometric/fingerprint')
+
+
+def biometricAttendanceLogs(request):
+    """View biometric attendance logs"""
+    logs = BiometricAttendance.objects.select_related('employee').all()
+
+    # Filter by date
+    filter_date = request.GET.get('date')
+    if filter_date:
+        logs = logs.filter(timestamp__date=filter_date)
+
+    # Filter by employee
+    employee_id = request.GET.get('employee')
+    if employee_id:
+        logs = logs.filter(employee_id=employee_id)
+
+    employees = Employee.objects.all()
+
+    context = {
+        'logs': logs[:100],  # Limit to 100 recent logs
+        'employees': employees,
+        'filter_date': filter_date or date.today().strftime('%Y-%m-%d')
+    }
+    return render(request, 'biometric/attendance_logs.html', context)
+
+
+def simulateBiometricScan(request):
+    """Simulate a fingerprint scan for testing (API endpoint)"""
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        employee_id = data.get('employee_id')
+        status = data.get('status', 'check_in')
+        device_id = data.get('device_id', 'DEVICE_001')
+
+        try:
+            emp = Employee.objects.get(emp_id=employee_id)
+
+            # Check if fingerprint exists
+            if not FingerprintData.objects.filter(employee=emp, is_active=True).exists():
+                return JsonResponse({'status': 'error', 'message': 'No active fingerprint found'}, status=400)
+
+            # Create biometric log
+            log = BiometricAttendance.objects.create(
+                employee=emp,
+                status=status,
+                device_id=device_id,
+                confidence_score=95
+            )
+
+            return JsonResponse({
+                'status': 'success',
+                'message': f'Attendance logged for {emp.first_name} {emp.last_name}',
+                'timestamp': log.timestamp.strftime('%Y-%m-%d %H:%M:%S'),
+                'action': status
+            })
+
+        except Employee.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'Employee not found'}, status=404)
+
+    return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
+
+
+# ==========================================
+# DOCUMENT MANAGEMENT VIEWS
+# ==========================================
+
+def documentDashboard(request):
+    """Main document management dashboard"""
+    documents = EmployeeDocument.objects.select_related('employee', 'category').all()
+    categories = DocumentCategory.objects.all()
+
+    # Get statistics
+    total_docs = documents.count()
+    active_docs = documents.filter(status='active').count()
+    expired_docs = documents.filter(status='expired').count()
+
+    # Check for expiring documents (within 30 days)
+    thirty_days_later = date.today() + timedelta(days=30)
+    expiring_soon = documents.filter(
+        expiry_date__lte=thirty_days_later,
+        expiry_date__gte=date.today(),
+        status='active'
+    ).count()
+
+    context = {
+        'documents': documents[:50],  # Show recent 50 documents
+        'categories': categories,
+        'total_docs': total_docs,
+        'active_docs': active_docs,
+        'expired_docs': expired_docs,
+        'expiring_soon': expiring_soon
+    }
+    return render(request, 'documents/dashboard.html', context)
+
+
+def employeeDocuments(request, emp_id):
+    """View all documents for a specific employee"""
+    employee = get_object_or_404(Employee, emp_id=emp_id)
+    documents = EmployeeDocument.objects.filter(employee=employee).select_related('category')
+    categories = DocumentCategory.objects.all()
+
+    context = {
+        'employee': employee,
+        'documents': documents,
+        'categories': categories
+    }
+    return render(request, 'documents/employee_documents.html', context)
+
+
+def uploadDocument(request):
+    """Upload a new document"""
+    if request.method == 'POST':
+        employee_id = request.POST.get('employee')
+        category_id = request.POST.get('category')
+        title = request.POST.get('title')
+        description = request.POST.get('description', '')
+        file = request.FILES.get('file')
+        expiry_date = request.POST.get('expiry_date') or None
+        is_confidential = request.POST.get('is_confidential') == 'on'
+        uploaded_by = request.POST.get('uploaded_by', 'Admin')
+
+        try:
+            emp = Employee.objects.get(emp_id=employee_id)
+            category = DocumentCategory.objects.get(id=category_id) if category_id else None
+
+            document = EmployeeDocument.objects.create(
+                employee=emp,
+                category=category,
+                title=title,
+                description=description,
+                file=file,
+                expiry_date=expiry_date,
+                is_confidential=is_confidential,
+                uploaded_by=uploaded_by
+            )
+
+            messages.success(request, f"Document '{title}' uploaded successfully for {emp.first_name} {emp.last_name}")
+            return redirect(f'/documents/employee/{employee_id}')
+
+        except Employee.DoesNotExist:
+            messages.error(request, "Employee not found")
+        except DocumentCategory.DoesNotExist:
+            messages.error(request, "Category not found")
+
+    employees = Employee.objects.all()
+    categories = DocumentCategory.objects.all()
+
+    context = {
+        'employees': employees,
+        'categories': categories
+    }
+    return render(request, 'documents/upload_document.html', context)
+
+
+def downloadDocument(request, doc_id):
+    """Download a document"""
+    document = get_object_or_404(EmployeeDocument, id=doc_id)
+
+    if document.file:
+        response = FileResponse(document.file.open('rb'))
+        response['Content-Type'] = 'application/octet-stream'
+        response['Content-Disposition'] = f'attachment; filename="{os.path.basename(document.file.name)}"'
+        return response
+
+    messages.error(request, "File not found")
+    return redirect('/documents/dashboard')
+
+
+def deleteDocument(request, doc_id):
+    """Delete a document"""
+    if request.method == 'POST':
+        try:
+            document = EmployeeDocument.objects.get(id=doc_id)
+            emp_id = document.employee.emp_id
+
+            # Delete the file from storage
+            if document.file:
+                document.file.delete()
+
+            document.delete()
+            messages.success(request, "Document deleted successfully")
+            return redirect(f'/documents/employee/{emp_id}')
+        except EmployeeDocument.DoesNotExist:
+            messages.error(request, "Document not found")
+
+    return redirect('/documents/dashboard')
+
+
+def manageCategories(request):
+    """Manage document categories"""
+    if request.method == 'POST':
+        action = request.POST.get('action')
+
+        if action == 'add':
+            name = request.POST.get('name')
+            description = request.POST.get('description', '')
+            icon = request.POST.get('icon', 'fa-file')
+
+            DocumentCategory.objects.create(
+                name=name,
+                description=description,
+                icon=icon
+            )
+            messages.success(request, f"Category '{name}' created successfully")
+
+        elif action == 'delete':
+            category_id = request.POST.get('category_id')
+            try:
+                category = DocumentCategory.objects.get(id=category_id)
+                category.delete()
+                messages.success(request, "Category deleted successfully")
+            except DocumentCategory.DoesNotExist:
+                messages.error(request, "Category not found")
+
+    categories = DocumentCategory.objects.all()
+    context = {'categories': categories}
+    return render(request, 'documents/manage_categories.html', context)
+
+
+# ==========================================
+# ANALYTICS AND REPORTING VIEWS
+# ==========================================
+
+def analyticsDashboard(request):
+    """Advanced analytics dashboard with charts and insights"""
+    from django.db.models import Avg, Sum, Max, Min
+
+    # Employee statistics
+    total_employees = Employee.objects.count()
+    total_departments = Department.objects.count()
+    total_roles = Role.objects.count()
+
+    # Department-wise employee distribution
+    dept_distribution = Department.objects.annotate(
+        emp_count=Count('employee')
+    ).values('name', 'emp_count')
+
+    # Role-wise employee distribution
+    role_distribution = Role.objects.annotate(
+        emp_count=Count('employee')
+    ).values('name', 'emp_count')
+
+    # Salary statistics
+    salary_stats = Employee.objects.aggregate(
+        avg_salary=Avg('salary'),
+        total_salary=Sum('salary'),
+        max_salary=Max('salary'),
+        min_salary=Min('salary')
+    )
+
+    # Attendance statistics (last 30 days)
+    thirty_days_ago = date.today() - timedelta(days=30)
+    attendance_stats = Attendance.objects.filter(date__gte=thirty_days_ago).values('status').annotate(
+        count=Count('status')
+    )
+
+    # Leave statistics
+    leave_stats = Leave.objects.values('status').annotate(count=Count('status'))
+    leave_type_stats = Leave.objects.values('leave_type').annotate(count=Count('leave_type'))
+
+    # Hiring trends (last 12 months)
+    one_year_ago = date.today() - timedelta(days=365)
+    twelve_months_ago = date.today() - timedelta(days=365)
+    hiring_by_month = []
+    for i in range(12):
+        month_start = twelve_months_ago + timedelta(days=30*i)
+        month_end = twelve_months_ago + timedelta(days=30*(i+1))
+        count = Employee.objects.filter(hire_date__gte=month_start, hire_date__lt=month_end).count()
+        hiring_by_month.append({'month': month_start.strftime('%b %Y'), 'count': count})
+
+    # Document statistics
+    doc_stats = {
+        'total': EmployeeDocument.objects.count(),
+        'active': EmployeeDocument.objects.filter(status='active').count(),
+        'expired': EmployeeDocument.objects.filter(status='expired').count(),
+        'confidential': EmployeeDocument.objects.filter(is_confidential=True).count()
+    }
+
+    # Biometric enrollment status
+    biometric_stats = {
+        'enrolled': FingerprintData.objects.filter(is_active=True).count(),
+        'not_enrolled': total_employees - FingerprintData.objects.filter(is_active=True).count()
+    }
+
+    context = {
+        'total_employees': total_employees,
+        'total_departments': total_departments,
+        'total_roles': total_roles,
+        'dept_distribution': list(dept_distribution),
+        'role_distribution': list(role_distribution),
+        'salary_stats': salary_stats,
+        'attendance_stats': list(attendance_stats),
+        'leave_stats': list(leave_stats),
+        'leave_type_stats': list(leave_type_stats),
+        'hiring_trend': hiring_by_month,
+        'doc_stats': doc_stats,
+        'biometric_stats': biometric_stats
+    }
+
+    return render(request, 'analytics/dashboard.html', context)
+
+
+# ==========================================
+# HR TOOLS AND UTILITIES
+# ==========================================
+
+def hrToolsDashboard(request):
+    """Creative HR tools and utilities"""
+    context = {}
+    return render(request, 'hr_tools/dashboard.html', context)
+
+
+def employeeDirectoryExport(request):
+    """Export employee directory to CSV"""
+    import csv
+    from django.http import HttpResponse
+
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = f'attachment; filename="employee_directory_{date.today()}.csv"'
+
+    writer = csv.writer(response)
+    writer.writerow(['Employee ID', 'First Name', 'Last Name', 'Department', 'Role', 'Salary', 'Bonus', 'Phone', 'Hire Date'])
+
+    employees = Employee.objects.select_related('dept', 'role').all()
+    for emp in employees:
+        writer.writerow([
+            emp.emp_id,
+            emp.first_name,
+            emp.last_name,
+            emp.dept.name,
+            emp.role.name,
+            emp.salary,
+            emp.bonus,
+            emp.phone_num,
+            emp.hire_date
+        ])
+
+    return response
+
+
+def birthdayReminders(request):
+    """View upcoming employee birthdays (requires birthdate field)"""
+    # Note: This requires adding a birthdate field to Employee model
+    # For now, we'll show a placeholder
+    context = {
+        'message': 'Birthday tracking feature coming soon! Add a birthdate field to Employee model to enable this.'
+    }
+    return render(request, 'hr_tools/birthday_reminders.html', context)
+
+
+def salaryCalculator(request):
+    """Salary calculator and comparison tool"""
+    if request.method == 'POST':
+        base_salary = float(request.POST.get('base_salary', 0))
+        bonus = float(request.POST.get('bonus', 0))
+        deductions = float(request.POST.get('deductions', 0))
+        tax_rate = float(request.POST.get('tax_rate', 0)) / 100
+
+        gross_salary = base_salary + bonus
+        tax_amount = gross_salary * tax_rate
+        net_salary = gross_salary - tax_amount - deductions
+
+        context = {
+            'calculated': True,
+            'base_salary': base_salary,
+            'bonus': bonus,
+            'gross_salary': gross_salary,
+            'tax_rate': tax_rate * 100,
+            'tax_amount': tax_amount,
+            'deductions': deductions,
+            'net_salary': net_salary
+        }
+        return render(request, 'hr_tools/salary_calculator.html', context)
+
+    return render(request, 'hr_tools/salary_calculator.html', {})
