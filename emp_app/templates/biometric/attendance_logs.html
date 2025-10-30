@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Biometric Attendance Logs - EmployeeHub{% endblock %}
+
+{% block content %}
+<section class="page-container">
+    <h1 class="mb-4"><i class="fas fa-history me-2"></i> Biometric Attendance Logs</h1>
+
+    <div class="card-modern mb-4">
+        <form method="GET" class="row g-3">
+            <div class="col-md-4">
+                <label for="date" class="form-label">Date</label>
+                <input type="date" class="form-control" id="date" name="date" value="{{ filter_date }}">
+            </div>
+            <div class="col-md-4">
+                <label for="employee" class="form-label">Employee</label>
+                <select class="form-select" id="employee" name="employee">
+                    <option value="">All Employees</option>
+                    {% for emp in employees %}
+                    <option value="{{ emp.emp_id }}">{{ emp.first_name }} {{ emp.last_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">&nbsp;</label>
+                <button type="submit" class="btn btn-gradient w-100">
+                    <i class="fas fa-search me-2"></i> Filter
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <div class="card-modern">
+        {% if logs %}
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Employee</th>
+                        <th>Timestamp</th>
+                        <th>Status</th>
+                        <th>Device</th>
+                        <th>Confidence</th>
+                        <th>Notes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for log in logs %}
+                    <tr>
+                        <td>{{ log.employee.first_name }} {{ log.employee.last_name }}</td>
+                        <td>{{ log.timestamp|date:"M d, Y H:i" }}</td>
+                        <td>
+                            {% if log.status == 'check_in' %}
+                            <span class="badge bg-success">Check In</span>
+                            {% elif log.status == 'check_out' %}
+                            <span class="badge bg-danger">Check Out</span>
+                            {% elif log.status == 'break_start' %}
+                            <span class="badge bg-warning">Break Start</span>
+                            {% else %}
+                            <span class="badge bg-info">Break End</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ log.device_id }}</td>
+                        <td>{{ log.confidence_score }}%</td>
+                        <td>{{ log.notes|default:"-" }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center py-5">
+            <i class="fas fa-history fa-3x mb-3" style="color: #cbd5e0;"></i>
+            <p class="text-muted">No attendance logs found</p>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

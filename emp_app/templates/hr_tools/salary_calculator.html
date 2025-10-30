@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Salary Calculator - EmployeeHub{% endblock %}
+
+{% block content %}
+<section class="page-container">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <h1 class="mb-4"><i class="fas fa-calculator me-2"></i> Salary Calculator</h1>
+
+            <div class="card-modern">
+                <form method="POST">
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        <label for="base_salary" class="form-label">Base Salary</label>
+                        <input type="number" class="form-control" id="base_salary" name="base_salary" placeholder="0.00" step="0.01" value="{{ base_salary|default:'' }}" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="bonus" class="form-label">Bonus</label>
+                        <input type="number" class="form-control" id="bonus" name="bonus" placeholder="0.00" step="0.01" value="{{ bonus|default:'' }}">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="tax_rate" class="form-label">Tax Rate (%)</label>
+                        <input type="number" class="form-control" id="tax_rate" name="tax_rate" placeholder="0" step="0.1" value="{{ tax_rate|default:'' }}">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="deductions" class="form-label">Other Deductions</label>
+                        <input type="number" class="form-control" id="deductions" name="deductions" placeholder="0.00" step="0.01" value="{{ deductions|default:'' }}">
+                    </div>
+
+                    <button type="submit" class="btn btn-gradient w-100">
+                        <i class="fas fa-calculator me-2"></i> Calculate
+                    </button>
+                </form>
+            </div>
+
+            {% if calculated %}
+            <div class="card-modern mt-4">
+                <h3 class="mb-4">Results</h3>
+
+                <table class="table">
+                    <tr>
+                        <th>Base Salary</th>
+                        <td class="text-end">${{ base_salary|floatformat:2 }}</td>
+                    </tr>
+                    <tr>
+                        <th>Bonus</th>
+                        <td class="text-end">${{ bonus|floatformat:2 }}</td>
+                    </tr>
+                    <tr class="table-info">
+                        <th>Gross Salary</th>
+                        <td class="text-end"><strong>${{ gross_salary|floatformat:2 }}</strong></td>
+                    </tr>
+                    <tr>
+                        <th>Tax ({{ tax_rate }}%)</th>
+                        <td class="text-end text-danger">-${{ tax_amount|floatformat:2 }}</td>
+                    </tr>
+                    <tr>
+                        <th>Other Deductions</th>
+                        <td class="text-end text-danger">-${{ deductions|floatformat:2 }}</td>
+                    </tr>
+                    <tr class="table-success">
+                        <th>Net Salary</th>
+                        <td class="text-end"><strong style="font-size: 1.5rem; color: #43e97b;">${{ net_salary|floatformat:2 }}</strong></td>
+                    </tr>
+                </table>
+            </div>
+            {% endif %}
+
+            <div class="mt-4">
+                <a href="/hr-tools/dashboard" class="btn btn-outline-gradient">
+                    <i class="fas fa-arrow-left me-2"></i> Back to HR Tools
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

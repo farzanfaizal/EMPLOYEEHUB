@@ -1,0 +1,205 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Analytics Dashboard - EmployeeHub{% endblock %}
+
+{% block extra_css %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+
+{% block content %}
+<section class="page-container">
+    <h1 class="mb-4"><i class="fas fa-chart-line me-2"></i> Analytics Dashboard</h1>
+
+    <!-- Key Metrics -->
+    <div class="row g-4 mb-5">
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-users"></i></div>
+                <div class="stat-value">{{ total_employees }}</div>
+                <div class="stat-label">Total Employees</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-building"></i></div>
+                <div class="stat-value">{{ total_departments }}</div>
+                <div class="stat-label">Departments</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-briefcase"></i></div>
+                <div class="stat-value">{{ total_roles }}</div>
+                <div class="stat-label">Roles</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-dollar-sign"></i></div>
+                <div class="stat-value">${{ salary_stats.avg_salary|floatformat:0 }}</div>
+                <div class="stat-label">Avg Salary</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts -->
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div class="card-modern">
+                <h3 class="mb-4">Employees by Department</h3>
+                <canvas id="deptChart"></canvas>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card-modern">
+                <h3 class="mb-4">Employees by Role</h3>
+                <canvas id="roleChart"></canvas>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card-modern">
+                <h3 class="mb-4">Attendance Status (Last 30 Days)</h3>
+                <canvas id="attendanceChart"></canvas>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card-modern">
+                <h3 class="mb-4">Leave Statistics</h3>
+                <canvas id="leaveChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics Tables -->
+    <div class="row g-4 mt-4">
+        <div class="col-md-6">
+            <div class="card-modern">
+                <h3 class="mb-4">Salary Statistics</h3>
+                <table class="table">
+                    <tr>
+                        <th>Average Salary</th>
+                        <td>${{ salary_stats.avg_salary|floatformat:2 }}</td>
+                    </tr>
+                    <tr>
+                        <th>Total Payroll</th>
+                        <td>${{ salary_stats.total_salary|floatformat:2 }}</td>
+                    </tr>
+                    <tr>
+                        <th>Highest Salary</th>
+                        <td>${{ salary_stats.max_salary|floatformat:2 }}</td>
+                    </tr>
+                    <tr>
+                        <th>Lowest Salary</th>
+                        <td>${{ salary_stats.min_salary|floatformat:2 }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card-modern">
+                <h3 class="mb-4">Document Statistics</h3>
+                <table class="table">
+                    <tr>
+                        <th>Total Documents</th>
+                        <td>{{ doc_stats.total }}</td>
+                    </tr>
+                    <tr>
+                        <th>Active Documents</th>
+                        <td>{{ doc_stats.active }}</td>
+                    </tr>
+                    <tr>
+                        <th>Expired Documents</th>
+                        <td>{{ doc_stats.expired }}</td>
+                    </tr>
+                    <tr>
+                        <th>Confidential Documents</th>
+                        <td>{{ doc_stats.confidential }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+// Department Chart
+const deptCtx = document.getElementById('deptChart').getContext('2d');
+new Chart(deptCtx, {
+    type: 'bar',
+    data: {
+        labels: {{ dept_distribution|safe }}.map(d => d.name),
+        datasets: [{
+            label: 'Employees',
+            data: {{ dept_distribution|safe }}.map(d => d.emp_count),
+            backgroundColor: 'rgba(102, 126, 234, 0.6)',
+            borderColor: 'rgba(102, 126, 234, 1)',
+            borderWidth: 1
+        }]
+    },
+    options: {
+        responsive: true,
+        scales: {
+            y: { beginAtZero: true }
+        }
+    }
+});
+
+// Role Chart
+const roleCtx = document.getElementById('roleChart').getContext('2d');
+new Chart(roleCtx, {
+    type: 'pie',
+    data: {
+        labels: {{ role_distribution|safe }}.map(d => d.name),
+        datasets: [{
+            data: {{ role_distribution|safe }}.map(d => d.emp_count),
+            backgroundColor: [
+                '#667eea', '#764ba2', '#f093fb', '#f5576c', '#4facfe',
+                '#00f2fe', '#43e97b', '#38f9d7', '#fa709a', '#fee140'
+            ]
+        }]
+    },
+    options: { responsive: true }
+});
+
+// Attendance Chart
+const attendanceCtx = document.getElementById('attendanceChart').getContext('2d');
+new Chart(attendanceCtx, {
+    type: 'doughnut',
+    data: {
+        labels: {{ attendance_stats|safe }}.map(d => d.status),
+        datasets: [{
+            data: {{ attendance_stats|safe }}.map(d => d.count),
+            backgroundColor: ['#43e97b', '#f5576c', '#fee140', '#4facfe', '#fa709a']
+        }]
+    },
+    options: { responsive: true }
+});
+
+// Leave Chart
+const leaveCtx = document.getElementById('leaveChart').getContext('2d');
+new Chart(leaveCtx, {
+    type: 'bar',
+    data: {
+        labels: {{ leave_type_stats|safe }}.map(d => d.leave_type),
+        datasets: [{
+            label: 'Leave Requests',
+            data: {{ leave_type_stats|safe }}.map(d => d.count),
+            backgroundColor: 'rgba(240, 93, 108, 0.6)',
+            borderColor: 'rgba(240, 93, 108, 1)',
+            borderWidth: 1
+        }]
+    },
+    options: {
+        responsive: true,
+        scales: {
+            y: { beginAtZero: true }
+        }
+    }
+});
+</script>
+{% endblock %}

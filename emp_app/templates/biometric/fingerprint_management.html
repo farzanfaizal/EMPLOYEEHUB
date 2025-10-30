@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Fingerprint Management - EmployeeHub{% endblock %}
+
+{% block content %}
+<section class="page-container">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1><i class="fas fa-fingerprint me-2"></i> Fingerprint Management</h1>
+            <p class="text-muted">Manage employee fingerprint enrollments for biometric attendance</p>
+        </div>
+    </div>
+
+    <!-- Statistics -->
+    <div class="row g-4 mb-5">
+        <div class="col-md-4">
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-users"></i></div>
+                <div class="stat-value">{{ total_employees }}</div>
+                <div class="stat-label">Total Employees</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+                <div class="stat-value">{{ enrolled_count }}</div>
+                <div class="stat-label">Enrolled</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-exclamation-circle"></i></div>
+                <div class="stat-value">{{ not_enrolled }}</div>
+                <div class="stat-label">Not Enrolled</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <a href="/biometric/enroll" class="btn btn-gradient me-2">
+                <i class="fas fa-plus me-2"></i> Enroll Fingerprint
+            </a>
+            <a href="/biometric/logs" class="btn btn-outline-gradient">
+                <i class="fas fa-history me-2"></i> View Logs
+            </a>
+        </div>
+    </div>
+
+    <!-- Enrolled Fingerprints -->
+    <div class="card-modern">
+        <h3 class="mb-4"><i class="fas fa-list me-2"></i> Enrolled Fingerprints</h3>
+
+        {% if fingerprints %}
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Employee</th>
+                        <th>Department</th>
+                        <th>Enrolled Date</th>
+                        <th>Device ID</th>
+                        <th>Quality Score</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for fp in fingerprints %}
+                    <tr>
+                        <td>{{ fp.employee.first_name }} {{ fp.employee.last_name }}</td>
+                        <td>{{ fp.employee.dept.name }}</td>
+                        <td>{{ fp.enrolled_date|date:"M d, Y" }}</td>
+                        <td>{{ fp.device_id|default:"N/A" }}</td>
+                        <td>{{ fp.quality_score }}%</td>
+                        <td>
+                            {% if fp.is_active %}
+                            <span class="badge bg-success">Active</span>
+                            {% else %}
+                            <span class="badge bg-secondary">Inactive</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="/biometric/update/{{ fp.id }}" class="btn btn-sm btn-outline-gradient">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <form action="/biometric/delete/{{ fp.id }}" method="POST" style="display: inline;" onsubmit="return confirm('Delete this fingerprint?');">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm btn-danger">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center py-5">
+            <i class="fas fa-fingerprint fa-3x mb-3" style="color: #cbd5e0;"></i>
+            <p class="text-muted">No fingerprints enrolled yet</p>
+            <a href="/biometric/enroll" class="btn btn-gradient">Enroll First Fingerprint</a>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

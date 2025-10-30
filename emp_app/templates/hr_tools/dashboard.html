@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}HR Tools - EmployeeHub{% endblock %}
+
+{% block content %}
+<section class="page-container">
+    <h1 class="mb-4"><i class="fas fa-tools me-2"></i> HR Tools & Utilities</h1>
+    <p class="text-muted mb-5">Creative tools to make HR work easier and more efficient</p>
+
+    <div class="row g-4">
+        <div class="col-md-4">
+            <a href="/hr-tools/export-directory" class="text-decoration-none">
+                <div class="card-gradient hover-lift">
+                    <i class="fas fa-download fa-3x mb-3"></i>
+                    <h3 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem;">Export Directory</h3>
+                    <p style="opacity: 0.9;">Download complete employee database as CSV</p>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-md-4">
+            <a href="/hr-tools/salary-calculator" class="text-decoration-none">
+                <div class="card-gradient hover-lift" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                    <i class="fas fa-calculator fa-3x mb-3"></i>
+                    <h3 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem;">Salary Calculator</h3>
+                    <p style="opacity: 0.9;">Calculate net salary with taxes and deductions</p>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-md-4">
+            <a href="/hr-tools/birthday-reminders" class="text-decoration-none">
+                <div class="card-gradient hover-lift" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                    <i class="fas fa-birthday-cake fa-3x mb-3"></i>
+                    <h3 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem;">Birthday Reminders</h3>
+                    <p style="opacity: 0.9;">Track upcoming employee birthdays</p>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-md-4">
+            <a href="/analytics/dashboard" class="text-decoration-none">
+                <div class="card-gradient hover-lift" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
+                    <i class="fas fa-chart-bar fa-3x mb-3"></i>
+                    <h3 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem;">Analytics</h3>
+                    <p style="opacity: 0.9;">View workforce analytics and insights</p>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-md-4">
+            <a href="/documents/dashboard" class="text-decoration-none">
+                <div class="card-gradient hover-lift" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
+                    <i class="fas fa-folder fa-3x mb-3"></i>
+                    <h3 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem;">Documents</h3>
+                    <p style="opacity: 0.9;">Manage employee documents</p>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-md-4">
+            <a href="/biometric/fingerprint" class="text-decoration-none">
+                <div class="card-gradient hover-lift" style="background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);">
+                    <i class="fas fa-fingerprint fa-3x mb-3"></i>
+                    <h3 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem;">Biometric</h3>
+                    <p style="opacity: 0.9;">Fingerprint attendance system</p>
+                </div>
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}

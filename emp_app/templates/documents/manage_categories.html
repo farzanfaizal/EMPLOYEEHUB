@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Manage Categories - EmployeeHub{% endblock %}
+
+{% block content %}
+<section class="page-container">
+    <h1 class="mb-4"><i class="fas fa-tags me-2"></i> Manage Document Categories</h1>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card-modern">
+                <h3 class="mb-4">Add New Category</h3>
+                <form method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="add">
+
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Category Name</label>
+                        <input type="text" class="form-control" id="name" name="name" placeholder="e.g., Contracts" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Description</label>
+                        <textarea class="form-control" id="description" name="description" rows="2"></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="icon" class="form-label">Icon (FontAwesome class)</label>
+                        <input type="text" class="form-control" id="icon" name="icon" placeholder="e.g., fa-file-contract" value="fa-file">
+                    </div>
+
+                    <button type="submit" class="btn btn-gradient">
+                        <i class="fas fa-plus me-2"></i> Add Category
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card-modern">
+                <h3 class="mb-4">Existing Categories</h3>
+
+                {% if categories %}
+                <div class="list-group">
+                    {% for cat in categories %}
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <i class="fas {{ cat.icon }} me-2"></i>
+                            <strong>{{ cat.name }}</strong>
+                            {% if cat.description %}
+                            <br><small class="text-muted">{{ cat.description }}</small>
+                            {% endif %}
+                        </div>
+                        <form method="POST" style="display: inline;" onsubmit="return confirm('Delete this category?');">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="delete">
+                            <input type="hidden" name="category_id" value="{{ cat.id }}">
+                            <button type="submit" class="btn btn-sm btn-danger">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </form>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="text-muted">No categories yet</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <a href="/documents/dashboard" class="btn btn-outline-gradient">
+            <i class="fas fa-arrow-left me-2"></i> Back to Dashboard
+        </a>
+    </div>
+</section>
+{% endblock %}

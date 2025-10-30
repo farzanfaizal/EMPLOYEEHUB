@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Enroll Fingerprint - EmployeeHub{% endblock %}
+
+{% block content %}
+<section class="page-container">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card-modern">
+                <h2 class="mb-4"><i class="fas fa-fingerprint me-2"></i> Enroll Fingerprint</h2>
+
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        <label for="employee" class="form-label">Select Employee</label>
+                        <select class="form-select" id="employee" name="employee" required>
+                            <option value="">Choose employee...</option>
+                            {% for emp in employees %}
+                            <option value="{{ emp.emp_id }}">{{ emp.first_name }} {{ emp.last_name }} - {{ emp.dept.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="fingerprint_template" class="form-label">Fingerprint Template Data</label>
+                        <textarea class="form-control" id="fingerprint_template" name="fingerprint_template" rows="4" placeholder="Paste fingerprint template data from scanner..." required></textarea>
+                        <small class="text-muted">This data comes from your fingerprint scanner device</small>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="device_id" class="form-label">Device ID</label>
+                        <input type="text" class="form-control" id="device_id" name="device_id" placeholder="e.g., SCANNER_001">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="quality_score" class="form-label">Quality Score (0-100)</label>
+                        <input type="number" class="form-control" id="quality_score" name="quality_score" min="0" max="100" value="85">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="fingerprint_image" class="form-label">Fingerprint Image (Optional)</label>
+                        <input type="file" class="form-control" id="fingerprint_image" name="fingerprint_image" accept="image/*">
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-gradient">
+                            <i class="fas fa-save me-2"></i> Enroll Fingerprint
+                        </button>
+                        <a href="/biometric/fingerprint" class="btn btn-outline-gradient">
+                            <i class="fas fa-arrow-left me-2"></i> Back to Management
+                        </a>
+                    </div>
+                </form>
+            </div>
+
+            <div class="card-modern mt-4">
+                <h5><i class="fas fa-info-circle me-2"></i> Instructions</h5>
+                <ol>
+                    <li>Select the employee to enroll</li>
+                    <li>Scan their fingerprint using your biometric device</li>
+                    <li>Copy the template data from the scanner software</li>
+                    <li>Paste it in the template field above</li>
+                    <li>Click "Enroll Fingerprint"</li>
+                </ol>
+                <p class="mb-0"><strong>Note:</strong> For testing without a device, you can enter dummy data.</p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
