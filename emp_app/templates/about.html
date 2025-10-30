@@ -1,0 +1,315 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}About the Developer - EmployeeHub{% endblock %}
+
+{% block extra_css %}
+<style>
+    .about-hero {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 4rem 0;
+        margin-bottom: 3rem;
+        border-radius: 15px;
+        box-shadow: 0 10px 40px rgba(102, 126, 234, 0.3);
+    }
+
+    .about-card {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        margin-bottom: 2rem;
+        transition: transform 0.3s ease;
+    }
+
+    .about-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    }
+
+    .skill-badge {
+        display: inline-block;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 25px;
+        margin: 0.3rem;
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+
+    .project-card {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        color: white;
+        padding: 2rem;
+        border-radius: 15px;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 5px 20px rgba(245, 87, 108, 0.3);
+    }
+
+    .social-link {
+        display: inline-block;
+        width: 50px;
+        height: 50px;
+        line-height: 50px;
+        text-align: center;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        font-size: 1.5rem;
+        margin: 0.5rem;
+        transition: all 0.3s ease;
+        text-decoration: none;
+    }
+
+    .social-link:hover {
+        transform: scale(1.1);
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        color: white;
+    }
+
+    .timeline-item {
+        border-left: 3px solid #667eea;
+        padding-left: 2rem;
+        margin-bottom: 2rem;
+        position: relative;
+    }
+
+    .timeline-item::before {
+        content: '';
+        position: absolute;
+        left: -8px;
+        top: 0;
+        width: 13px;
+        height: 13px;
+        border-radius: 50%;
+        background: #667eea;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="page-container">
+    <!-- Hero Section -->
+    <div class="about-hero text-center">
+        <div class="container">
+            <h1 class="display-4 mb-3" style="font-weight: 800;">About the Developer</h1>
+            <p class="lead" style="font-size: 1.3rem; opacity: 0.95;">Building the future, one line of code at a time</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <!-- Main Profile Card -->
+            <div class="col-lg-4 mb-4">
+                <div class="about-card text-center">
+                    <div class="mb-4">
+                        <i class="fas fa-user-circle" style="font-size: 6rem; color: #667eea;"></i>
+                    </div>
+                    <h2 style="font-weight: 700; color: #2d3748;">Farzan Faisal</h2>
+                    <p style="color: #667eea; font-weight: 600; font-size: 1.1rem;">Full-Stack Developer & AI Engineer</p>
+                    <p style="color: #718096; margin-bottom: 1.5rem;">Computer Science & Engineering Graduate</p>
+
+                    <!-- Social Links -->
+                    <div class="mt-4">
+                        <a href="https://im-farzan.netlify.app/" target="_blank" class="social-link" aria-label="Portfolio">
+                            <i class="fas fa-globe"></i>
+                        </a>
+                        <a href="https://github.com/farzanfaizal" target="_blank" class="social-link" aria-label="GitHub">
+                            <i class="fab fa-github"></i>
+                        </a>
+                        <a href="https://linkedin.com/in/farzan-faisal" target="_blank" class="social-link" aria-label="LinkedIn">
+                            <i class="fab fa-linkedin"></i>
+                        </a>
+                    </div>
+
+                    <a href="https://im-farzan.netlify.app/" target="_blank" class="btn btn-gradient mt-4" style="width: 100%;">
+                        <i class="fas fa-external-link-alt me-2"></i> Visit Portfolio
+                    </a>
+                </div>
+
+                <!-- Quick Stats -->
+                <div class="about-card">
+                    <h4 style="font-weight: 700; color: #2d3748; margin-bottom: 1.5rem;">
+                        <i class="fas fa-chart-line me-2" style="color: #667eea;"></i> Expertise
+                    </h4>
+                    <div class="d-flex justify-content-between mb-3">
+                        <span style="color: #4a5568;">Web Development</span>
+                        <span style="color: #667eea; font-weight: 600;">Expert</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-3">
+                        <span style="color: #4a5568;">AI Integration</span>
+                        <span style="color: #667eea; font-weight: 600;">Advanced</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-3">
+                        <span style="color: #4a5568;">Database Design</span>
+                        <span style="color: #667eea; font-weight: 600;">Expert</span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span style="color: #4a5568;">UI/UX Design</span>
+                        <span style="color: #667eea; font-weight: 600;">Proficient</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-lg-8">
+                <!-- About Me -->
+                <div class="about-card">
+                    <h3 style="font-weight: 700; color: #2d3748; margin-bottom: 1.5rem;">
+                        <i class="fas fa-user me-2" style="color: #667eea;"></i> About Me
+                    </h3>
+                    <p style="color: #4a5568; line-height: 1.8; font-size: 1.05rem;">
+                        Computer Science & Engineering graduate with a passion for building <strong>scalable web applications</strong> and <strong>AI-enhanced systems</strong>.
+                        I specialize in creating solutions that bridge the gap between complex technology and intuitive user experiences.
+                    </p>
+                    <p style="color: #4a5568; line-height: 1.8; font-size: 1.05rem;">
+                        My expertise spans modern frameworks like <strong>React.js</strong>, <strong>Flask</strong>, <strong>Django</strong>, and <strong>PostgreSQL</strong>.
+                        I specialize in AI prompt engineering, Modular Chatbot Pipelines (MCP), and automotive data integration.
+                    </p>
+                    <p style="color: #4a5568; line-height: 1.8; font-size: 1.05rem;">
+                        I believe in writing <strong>clean, maintainable code</strong> and creating user experiences that are both intuitive and powerful.
+                        Always learning, always building.
+                    </p>
+                </div>
+
+                <!-- Featured Project -->
+                <div class="project-card">
+                    <h3 style="font-weight: 700; margin-bottom: 1rem;">
+                        <i class="fas fa-rocket me-2"></i> Featured Project: VINtelligence AI
+                    </h3>
+                    <p style="opacity: 0.95; line-height: 1.7; font-size: 1.05rem; margin-bottom: 1.5rem;">
+                        An intelligent AI co-pilot platform designed for the automotive industry. VINtelligence AI revolutionizes how users interact with vehicle data
+                        by providing instant part compatibility checks, VIN decoding, and intelligent recommendations.
+                    </p>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div style="background: rgba(255,255,255,0.2); padding: 1rem; border-radius: 10px;">
+                                <h5 style="font-weight: 600; margin-bottom: 0.5rem;">
+                                    <i class="fas fa-brain me-2"></i> AI-Powered
+                                </h5>
+                                <p style="margin: 0; font-size: 0.95rem; opacity: 0.9;">
+                                    Advanced natural language processing for intuitive vehicle queries
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div style="background: rgba(255,255,255,0.2); padding: 1rem; border-radius: 10px;">
+                                <h5 style="font-weight: 600; margin-bottom: 0.5rem;">
+                                    <i class="fas fa-barcode me-2"></i> VIN Decoding
+                                </h5>
+                                <p style="margin: 0; font-size: 0.95rem; opacity: 0.9;">
+                                    Instant vehicle identification and comprehensive specifications
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div style="background: rgba(255,255,255,0.2); padding: 1rem; border-radius: 10px;">
+                                <h5 style="font-weight: 600; margin-bottom: 0.5rem;">
+                                    <i class="fas fa-puzzle-piece me-2"></i> Part Compatibility
+                                </h5>
+                                <p style="margin: 0; font-size: 0.95rem; opacity: 0.9;">
+                                    Real-time compatibility verification across millions of parts
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div style="background: rgba(255,255,255,0.2); padding: 1rem; border-radius: 10px;">
+                                <h5 style="font-weight: 600; margin-bottom: 0.5rem;">
+                                    <i class="fas fa-comments me-2"></i> Smart Assistant
+                                </h5>
+                                <p style="margin: 0; font-size: 0.95rem; opacity: 0.9;">
+                                    Context-aware chatbot with modular pipeline architecture
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Technical Skills -->
+                <div class="about-card">
+                    <h3 style="font-weight: 700; color: #2d3748; margin-bottom: 1.5rem;">
+                        <i class="fas fa-code me-2" style="color: #667eea;"></i> Technical Skills
+                    </h3>
+
+                    <div class="mb-4">
+                        <h5 style="color: #4a5568; font-weight: 600; margin-bottom: 1rem;">Frontend Development</h5>
+                        <span class="skill-badge">React.js</span>
+                        <span class="skill-badge">JavaScript (ES6+)</span>
+                        <span class="skill-badge">HTML5 & CSS3</span>
+                        <span class="skill-badge">Bootstrap</span>
+                        <span class="skill-badge">Responsive Design</span>
+                    </div>
+
+                    <div class="mb-4">
+                        <h5 style="color: #4a5568; font-weight: 600; margin-bottom: 1rem;">Backend Development</h5>
+                        <span class="skill-badge">Django</span>
+                        <span class="skill-badge">Flask</span>
+                        <span class="skill-badge">Python</span>
+                        <span class="skill-badge">RESTful APIs</span>
+                        <span class="skill-badge">PostgreSQL</span>
+                    </div>
+
+                    <div class="mb-4">
+                        <h5 style="color: #4a5568; font-weight: 600; margin-bottom: 1rem;">AI & Machine Learning</h5>
+                        <span class="skill-badge">Prompt Engineering</span>
+                        <span class="skill-badge">MCP (Modular Chatbot Pipeline)</span>
+                        <span class="skill-badge">Natural Language Processing</span>
+                        <span class="skill-badge">AI Integration</span>
+                    </div>
+
+                    <div>
+                        <h5 style="color: #4a5568; font-weight: 600; margin-bottom: 1rem;">Tools & Platforms</h5>
+                        <span class="skill-badge">Git & GitHub</span>
+                        <span class="skill-badge">VS Code</span>
+                        <span class="skill-badge">Render</span>
+                        <span class="skill-badge">Netlify</span>
+                        <span class="skill-badge">Docker</span>
+                    </div>
+                </div>
+
+                <!-- Development Philosophy -->
+                <div class="about-card">
+                    <h3 style="font-weight: 700; color: #2d3748; margin-bottom: 1.5rem;">
+                        <i class="fas fa-lightbulb me-2" style="color: #667eea;"></i> Development Philosophy
+                    </h3>
+
+                    <div class="timeline-item">
+                        <h5 style="color: #2d3748; font-weight: 600;">Clean Code</h5>
+                        <p style="color: #4a5568;">Write code that humans can read and understand. Prioritize clarity, maintainability, and documentation.</p>
+                    </div>
+
+                    <div class="timeline-item">
+                        <h5 style="color: #2d3748; font-weight: 600;">User-Centric Design</h5>
+                        <p style="color: #4a5568;">Every feature should solve a real problem. Focus on intuitive interfaces and seamless user experiences.</p>
+                    </div>
+
+                    <div class="timeline-item">
+                        <h5 style="color: #2d3748; font-weight: 600;">Continuous Learning</h5>
+                        <p style="color: #4a5568;">Technology evolves rapidly. Stay curious, experiment with new tools, and never stop improving.</p>
+                    </div>
+
+                    <div class="timeline-item" style="border-left: none; margin-bottom: 0;">
+                        <h5 style="color: #2d3748; font-weight: 600;">Scalable Solutions</h5>
+                        <p style="color: #4a5568; margin-bottom: 0;">Build systems that grow with user needs. Plan for scale, optimize for performance.</p>
+                    </div>
+                </div>
+
+                <!-- Contact -->
+                <div class="about-card text-center" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                    <h3 style="font-weight: 700; margin-bottom: 1rem;">
+                        <i class="fas fa-envelope me-2"></i> Let's Connect
+                    </h3>
+                    <p style="opacity: 0.95; margin-bottom: 1.5rem; font-size: 1.05rem;">
+                        Interested in collaboration or have a project in mind? Feel free to reach out!
+                    </p>
+                    <a href="https://im-farzan.netlify.app/" target="_blank" class="btn btn-light btn-lg">
+                        <i class="fas fa-paper-plane me-2"></i> Get in Touch
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

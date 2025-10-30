@@ -843,3 +843,9 @@ def salaryCalculator(request):
         return render(request, 'hr_tools/salary_calculator.html', context)
 
     return render(request, 'hr_tools/salary_calculator.html', {})
+
+
+# About Page View
+def about(request):
+    """Display developer information and portfolio"""
+    return render(request, 'about.html')

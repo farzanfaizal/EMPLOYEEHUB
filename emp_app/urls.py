@@ -45,4 +45,7 @@ urlpatterns = [
     path('hr-tools/export-directory', views.employeeDirectoryExport, name='export-directory'),
     path('hr-tools/birthday-reminders', views.birthdayReminders, name='birthday-reminders'),
     path('hr-tools/salary-calculator', views.salaryCalculator, name='salary-calculator'),
+
+    # About Page
+    path('about', views.about, name='about'),
 ]
