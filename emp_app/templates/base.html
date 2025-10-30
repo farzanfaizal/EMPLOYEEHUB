@@ -61,62 +61,47 @@
                             <i class="fas fa-home me-1"></i> Home
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link-custom {% block nav_all_emp %}{% endblock %}" href="/all-emp">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link-custom dropdown-toggle {% block nav_employees %}{% endblock %}" href="#" role="button" data-bs-toggle="dropdown">
                             <i class="fas fa-users me-1"></i> Employees
                         </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link-custom {% block nav_add %}{% endblock %}" href="/add-emp">
-                            <i class="fas fa-user-plus me-1"></i> Add
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link-custom {% block nav_remove %}{% endblock %}" href="/remove-emp">
-                            <i class="fas fa-user-minus me-1"></i> Remove
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link-custom {% block nav_update %}{% endblock %}" href="/employees">
-                            <i class="fas fa-edit me-1"></i> Update
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link-custom {% block nav_filter %}{% endblock %}" href="/filter-emp">
-                            <i class="fas fa-filter me-1"></i> Filter
-                        </a>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link-custom dropdown-toggle {% block nav_attendance %}{% endblock %}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fas fa-calendar-check me-1"></i> Attendance
-                        </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="/attendance/mark"><i class="fas fa-check me-2"></i> Mark Attendance</a></li>
-                            <li><a class="dropdown-item" href="/attendance/view"><i class="fas fa-eye me-2"></i> View Attendance</a></li>
-                            <li><a class="dropdown-item" href="/attendance/report"><i class="fas fa-chart-bar me-2"></i> Reports</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="/attendance/apply-leave"><i class="fas fa-plane-departure me-2"></i> Apply Leave</a></li>
-                            <li><a class="dropdown-item" href="/attendance/leaves"><i class="fas fa-list me-2"></i> View Leaves</a></li>
+                            <li><a class="dropdown-item" href="/all-emp"><i class="fas fa-list me-2"></i> View All</a></li>
+                            <li><a class="dropdown-item" href="/add-emp"><i class="fas fa-user-plus me-2"></i> Add Employee</a></li>
+                            <li><a class="dropdown-item" href="/employees"><i class="fas fa-edit me-2"></i> Update</a></li>
+                            <li><a class="dropdown-item" href="/remove-emp"><i class="fas fa-user-minus me-2"></i> Remove</a></li>
+                            <li><a class="dropdown-item" href="/filter-emp"><i class="fas fa-filter me-2"></i> Filter</a></li>
                         </ul>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link-custom dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <a class="nav-link-custom dropdown-toggle {% block nav_attendance %}{% endblock %}" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-calendar-check me-1"></i> Attendance
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="/attendance/mark"><i class="fas fa-check me-2"></i> Mark</a></li>
+                            <li><a class="dropdown-item" href="/attendance/view"><i class="fas fa-eye me-2"></i> View</a></li>
+                            <li><a class="dropdown-item" href="/attendance/report"><i class="fas fa-chart-bar me-2"></i> Reports</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="/attendance/apply-leave"><i class="fas fa-plane-departure me-2"></i> Apply Leave</a></li>
+                            <li><a class="dropdown-item" href="/attendance/leaves"><i class="fas fa-list me-2"></i> Leaves</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link-custom dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
                             <i class="fas fa-fingerprint me-1"></i> Biometric
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="/biometric/fingerprint"><i class="fas fa-fingerprint me-2"></i> Management</a></li>
-                            <li><a class="dropdown-item" href="/biometric/enroll"><i class="fas fa-plus me-2"></i> Enroll</a></li>
+                            <li><a class="dropdown-item" href="/biometric/fingerprint"><i class="fas fa-fingerprint me-2"></i> Manage</a></li>
                             <li><a class="dropdown-item" href="/biometric/logs"><i class="fas fa-history me-2"></i> Logs</a></li>
                         </ul>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link-custom dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <a class="nav-link-custom dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
                             <i class="fas fa-folder me-1"></i> Documents
                         </a>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="/documents/dashboard"><i class="fas fa-th-large me-2"></i> Dashboard</a></li>
                             <li><a class="dropdown-item" href="/documents/upload"><i class="fas fa-upload me-2"></i> Upload</a></li>
-                            <li><a class="dropdown-item" href="/documents/categories"><i class="fas fa-tags me-2"></i> Categories</a></li>
                         </ul>
                     </li>
                     <li class="nav-item">
