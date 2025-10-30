@@ -157,6 +157,19 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
+# File Upload Settings
+DATA_UPLOAD_MAX_MEMORY_SIZE = 5242880  # 5MB max file size
+FILE_UPLOAD_MAX_MEMORY_SIZE = 5242880  # 5MB max file size
+
+# Allowed file types for document uploads
+ALLOWED_DOCUMENT_TYPES = [
+    'pdf', 'doc', 'docx', 'txt', 'jpg', 'jpeg', 'png',
+    'xls', 'xlsx', 'csv', 'zip'
+]
+
+# Maximum file size per upload (5MB)
+MAX_UPLOAD_SIZE = 5 * 1024 * 1024  # 5MB in bytes
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 

@@ -542,7 +542,7 @@ def employeeDocuments(request, emp_id):
 
 
 def uploadDocument(request):
-    """Upload a new document"""
+    """Upload a new document with validation"""
     if request.method == 'POST':
         employee_id = request.POST.get('employee')
         category_id = request.POST.get('category')
@@ -551,11 +551,44 @@ def uploadDocument(request):
         file = request.FILES.get('file')
         expiry_date = request.POST.get('expiry_date') or None
         is_confidential = request.POST.get('is_confidential') == 'on'
-        uploaded_by = request.POST.get('uploaded_by', 'Admin')
+        uploaded_by = request.POST.get('uploaded_by', 'Public User')
+
+        # Validate file upload
+        if not file:
+            messages.error(request, "Please select a file to upload")
+            return redirect('/documents/upload')
+
+        # Check file size (5MB limit)
+        from django.conf import settings
+        max_size = getattr(settings, 'MAX_UPLOAD_SIZE', 5 * 1024 * 1024)
+        if file.size > max_size:
+            messages.error(request, f"File size exceeds {max_size / (1024*1024):.0f}MB limit. Your file: {file.size / (1024*1024):.2f}MB")
+            return redirect('/documents/upload')
+
+        # Check file type
+        file_ext = file.name.split('.')[-1].lower()
+        allowed_types = getattr(settings, 'ALLOWED_DOCUMENT_TYPES', ['pdf', 'doc', 'docx', 'txt', 'jpg', 'jpeg', 'png'])
+        if file_ext not in allowed_types:
+            messages.error(request, f"File type '.{file_ext}' not allowed. Allowed types: {', '.join(allowed_types)}")
+            return redirect('/documents/upload')
+
+        # Sanitize title and description
+        title = title.strip()[:200]  # Limit title length
+        description = description.strip()[:1000]  # Limit description length
+
+        if not title:
+            messages.error(request, "Please provide a document title")
+            return redirect('/documents/upload')
 
         try:
             emp = Employee.objects.get(emp_id=employee_id)
             category = DocumentCategory.objects.get(id=category_id) if category_id else None
+
+            # Check total documents per employee (limit to 50)
+            doc_count = EmployeeDocument.objects.filter(employee=emp).count()
+            if doc_count >= 50:
+                messages.error(request, f"Maximum 50 documents per employee reached for {emp.first_name} {emp.last_name}")
+                return redirect('/documents/upload')
 
             document = EmployeeDocument.objects.create(
                 employee=emp,
@@ -568,13 +601,16 @@ def uploadDocument(request):
                 uploaded_by=uploaded_by
             )
 
-            messages.success(request, f"Document '{title}' uploaded successfully for {emp.first_name} {emp.last_name}")
+            messages.success(request, f"Document '{title}' uploaded successfully ({file.size / 1024:.0f}KB)")
             return redirect(f'/documents/employee/{employee_id}')
 
         except Employee.DoesNotExist:
             messages.error(request, "Employee not found")
         except DocumentCategory.DoesNotExist:
             messages.error(request, "Category not found")
+        except Exception as e:
+            messages.error(request, f"Upload failed: {str(e)}")
+            return redirect('/documents/upload')
 
     employees = Employee.objects.all()
     categories = DocumentCategory.objects.all()

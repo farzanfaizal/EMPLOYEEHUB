@@ -1,0 +1,2 @@
+CommandError: Unable to serialize database: connection to server at "ep-old-silence-a1skq2st-pooler.ap-southeast-1.aws.neon.tech" (13.228.46.236), port 5432 failed: fe_sendauth: no password supplied
+[
