@@ -40,15 +40,20 @@ function initNavbar() {
         lastScroll = currentScroll;
     });
 
-    // Mobile menu toggle
-    const navbarToggler = document.querySelector('.navbar-toggler');
+    // Close mobile menu when clicking a nav link
     const navbarCollapse = document.querySelector('.navbar-collapse');
+    const mobileNavLinks = document.querySelectorAll('.navbar-collapse .nav-link, .navbar-collapse .dropdown-item');
 
-    if (navbarToggler && navbarCollapse) {
-        navbarToggler.addEventListener('click', () => {
-            navbarCollapse.classList.toggle('show');
+    mobileNavLinks.forEach(link => {
+        link.addEventListener('click', () => {
+            if (navbarCollapse && navbarCollapse.classList.contains('show')) {
+                const bsCollapse = bootstrap.Collapse.getInstance(navbarCollapse);
+                if (bsCollapse) {
+                    bsCollapse.hide();
+                }
+            }
         });
-    }
+    });
 
     // Active link highlighting
     const navLinks = document.querySelectorAll('.nav-link-custom');

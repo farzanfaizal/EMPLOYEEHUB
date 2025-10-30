@@ -3,35 +3,35 @@
    ============================================ */
 
 :root {
-    /* Color Palette - Modern Gradient Theme */
-    --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-    --accent-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-    --success-gradient: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-    --dark-gradient: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    /* Color Palette - Professional Corporate Theme */
+    --primary-gradient: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+    --secondary-gradient: linear-gradient(135deg, #475569 0%, #64748b 100%);
+    --accent-gradient: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%);
+    --success-gradient: linear-gradient(135deg, #059669 0%, #10b981 100%);
+    --dark-gradient: linear-gradient(135deg, #1e293b 0%, #334155 100%);
 
-    --primary-color: #667eea;
-    --secondary-color: #764ba2;
-    --accent-color: #4facfe;
-    --success-color: #43e97b;
-    --warning-color: #ffa726;
-    --danger-color: #f5576c;
-    --dark-color: #1e3c72;
-    --light-color: #f8f9fa;
+    --primary-color: #1e3a8a;
+    --secondary-color: #475569;
+    --accent-color: #0ea5e9;
+    --success-color: #059669;
+    --warning-color: #f59e0b;
+    --danger-color: #dc2626;
+    --dark-color: #1e293b;
+    --light-color: #f8fafc;
 
     /* Neutral Colors */
-    --text-primary: #2d3748;
-    --text-secondary: #718096;
-    --bg-light: #f7fafc;
+    --text-primary: #1e293b;
+    --text-secondary: #64748b;
+    --bg-light: #f8fafc;
     --bg-white: #ffffff;
     --border-color: #e2e8f0;
 
     /* Shadows */
-    --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
-    --shadow-md: 0 4px 6px rgba(0,0,0,0.07);
-    --shadow-lg: 0 10px 25px rgba(0,0,0,0.1);
-    --shadow-xl: 0 20px 40px rgba(0,0,0,0.15);
-    --shadow-glow: 0 0 30px rgba(102, 126, 234, 0.3);
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+    --shadow-md: 0 2px 6px rgba(0,0,0,0.1);
+    --shadow-lg: 0 4px 12px rgba(0,0,0,0.12);
+    --shadow-xl: 0 8px 24px rgba(0,0,0,0.15);
+    --shadow-glow: 0 0 20px rgba(30, 58, 138, 0.15);
 
     /* Spacing */
     --spacing-xs: 0.5rem;
@@ -66,7 +66,7 @@
 body {
     font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     color: var(--text-primary);
-    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    background: #f1f5f9;
     background-attachment: fixed;
     line-height: 1.6;
     overflow-x: hidden;
@@ -260,13 +260,13 @@ body {
 .navbar-custom {
     background: rgba(255, 255, 255, 0.98);
     backdrop-filter: blur(10px);
-    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
     padding: 0.75rem 0;
     position: sticky;
     top: 0;
     z-index: 1000;
     transition: all var(--transition-base);
-    border-bottom: 1px solid rgba(102, 126, 234, 0.1);
+    border-bottom: 1px solid rgba(30, 58, 138, 0.08);
 }
 
 .navbar-custom.scrolled {
@@ -350,14 +350,14 @@ body {
 
 .nav-link-custom:hover {
     color: var(--primary-color) !important;
-    background: rgba(102, 126, 234, 0.05);
+    background: rgba(30, 58, 138, 0.05);
     transform: translateY(-1px);
 }
 
 .nav-link-custom.active {
     background: var(--primary-gradient) !important;
     color: white !important;
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 2px 8px rgba(30, 58, 138, 0.25);
 }
 
 .nav-link-custom.active::before {
@@ -366,7 +366,7 @@ body {
 
 .nav-link-custom.active:hover {
     transform: translateY(-1px);
-    box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 4px 12px rgba(30, 58, 138, 0.3);
 }
 
 /* Dropdown Styling */
@@ -419,16 +419,16 @@ body {
 }
 
 .navbar-toggler:hover {
-    background: rgba(102, 126, 234, 0.1);
+    background: rgba(30, 58, 138, 0.08);
     transform: scale(1.05);
 }
 
 .navbar-toggler:focus {
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+    box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.15);
 }
 
 .navbar-toggler-icon {
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(102, 126, 234, 1)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(30, 58, 138, 1)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
     width: 24px;
     height: 24px;
 }
@@ -542,7 +542,7 @@ body {
     padding: var(--spacing-lg);
     box-shadow: var(--shadow-md);
     transition: all var(--transition-base);
-    border: 1px solid rgba(102, 126, 234, 0.1);
+    border: 1px solid rgba(30, 58, 138, 0.08);
     overflow: hidden;
     position: relative;
     height: 100%;
@@ -565,9 +565,9 @@ body {
 }
 
 .card-modern:hover {
-    transform: translateY(-8px);
+    transform: translateY(-5px);
     box-shadow: var(--shadow-xl);
-    border-color: rgba(102, 126, 234, 0.3);
+    border-color: rgba(30, 58, 138, 0.15);
 }
 
 .card-glass {
@@ -631,8 +631,8 @@ body {
     outline: none;
     border-color: var(--primary-color);
     background: white;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-    transform: translateY(-2px);
+    box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1);
+    transform: translateY(-1px);
 }
 
 .form-control-modern::placeholder {
@@ -660,7 +660,7 @@ body {
     outline: none;
     border-color: var(--primary-color);
     background: white;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1);
 }
 
 /* ============================================
@@ -674,7 +674,7 @@ body {
     align-items: center;
     justify-content: center;
     overflow: hidden;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
 }
 
 .hero-section::before {
@@ -767,7 +767,7 @@ body {
     transition: all var(--transition-base);
     position: relative;
     overflow: hidden;
-    border: 1px solid rgba(102, 126, 234, 0.1);
+    border: 1px solid rgba(30, 58, 138, 0.08);
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -784,9 +784,9 @@ body {
 }
 
 .employee-card:hover {
-    transform: translateY(-8px);
+    transform: translateY(-5px);
     box-shadow: var(--shadow-xl);
-    border-color: rgba(102, 126, 234, 0.3);
+    border-color: rgba(30, 58, 138, 0.15);
 }
 
 .employee-avatar {
@@ -1323,7 +1323,7 @@ body {
 .search-input:focus {
     outline: none;
     border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1);
 }
 
 .search-icon {
@@ -1432,12 +1432,12 @@ body {
 .btn-corporate-primary {
     background: var(--primary-gradient);
     color: white;
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 2px 8px rgba(30, 58, 138, 0.25);
 }
 
 .btn-corporate-primary:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 4px 16px rgba(30, 58, 138, 0.35);
 }
 
 .btn-corporate-secondary {
@@ -1453,25 +1453,25 @@ body {
 }
 
 .btn-corporate-danger {
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
     color: white;
-    box-shadow: 0 4px 12px rgba(245, 87, 108, 0.3);
+    box-shadow: 0 2px 8px rgba(220, 38, 38, 0.25);
 }
 
 .btn-corporate-danger:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(245, 87, 108, 0.4);
+    box-shadow: 0 4px 16px rgba(220, 38, 38, 0.35);
 }
 
 .btn-corporate-success {
     background: var(--success-gradient);
     color: white;
-    box-shadow: 0 4px 12px rgba(67, 233, 123, 0.3);
+    box-shadow: 0 2px 8px rgba(5, 150, 105, 0.25);
 }
 
 .btn-corporate-success:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(67, 233, 123, 0.4);
+    box-shadow: 0 4px 16px rgba(5, 150, 105, 0.35);
 }
 
 /* Button Groups */
