@@ -48,4 +48,7 @@ urlpatterns = [
 
     # About Page
     path('about', views.about, name='about'),
+
+    # Contact Page
+    path('contact', views.contact, name='contact'),
 ]

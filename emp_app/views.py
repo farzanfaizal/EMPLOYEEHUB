@@ -26,11 +26,37 @@ def index(request):
     recent_hires = Employee.objects.filter(hire_date__gte=thirty_days_ago).count()
     growth_rate = round((recent_hires / total_employees * 100) if total_employees > 0 else 0, 1)
 
+    # Get recent employees (last 5 added)
+    recent_employees = Employee.objects.order_by('-emp_id')[:5]
+
+    # Get today's attendance stats
+    today = date.today()
+    today_attendance = Attendance.objects.filter(date=today)
+    present_today = today_attendance.filter(status='present').count()
+    absent_today = today_attendance.filter(status='absent').count()
+
+    # Get pending leave requests
+    pending_leaves = Leave.objects.filter(status='pending').count()
+
+    # Get recent documents (last 5 uploaded)
+    recent_documents = EmployeeDocument.objects.order_by('-uploaded_at')[:5]
+
+    # Calculate average salary
+    from django.db.models import Avg
+    avg_salary = Employee.objects.aggregate(Avg('salary'))['salary__avg']
+    avg_salary = round(avg_salary) if avg_salary else 0
+
     context = {
         'total_employees': total_employees,
         'total_departments': total_departments,
         'total_roles': total_roles,
-        'growth_rate': growth_rate
+        'growth_rate': growth_rate,
+        'recent_employees': recent_employees,
+        'present_today': present_today,
+        'absent_today': absent_today,
+        'pending_leaves': pending_leaves,
+        'recent_documents': recent_documents,
+        'avg_salary': avg_salary,
     }
     return render(request, 'index.html', context)
 
@@ -849,3 +875,9 @@ def salaryCalculator(request):
 def about(request):
     """Display developer information and portfolio"""
     return render(request, 'about.html')
+
+
+# Contact Page View
+def contact(request):
+    """Display contact information and form"""
+    return render(request, 'contact.html')

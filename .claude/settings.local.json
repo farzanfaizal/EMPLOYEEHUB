@@ -1,19 +1,7 @@
 {
   "permissions": {
     "allow": [
-      "Bash(python manage.py collectstatic:*)",
-      "Bash(python manage.py:*)",
-      "Bash(pip install:*)",
-      "Bash(timeout:*)",
-      "Bash(git add:*)",
-      "Bash(git push:*)",
-      "Bash(set USE_SQLITE=True)",
-      "Bash(rm:*)",
-      "Bash(cat:*)",
-      "Bash(git commit:*)",
-      "Bash(python migrate_to_postgres.py:*)",
-      "Bash(git reset:*)",
-      "Bash(python -c \"import os; os.environ[''DB_PASSWORD'']=''npg_M7RXbu5jdZAG''; os.environ[''DB_NAME'']=''neondb''; os.environ[''DB_USER'']=''neondb_owner''; os.environ[''DB_HOST'']=''ep-old-silence-a1skq2st-pooler.ap-southeast-1.aws.neon.tech''; os.environ[''DB_PORT'']=''5432''; import django; django.setup(); from django.db import connection; connection.ensure_connection(); print(''✅ Database connection successful!'')\")"
+      "Bash(python:*)"
     ],
     "deny": [],
     "ask": []
