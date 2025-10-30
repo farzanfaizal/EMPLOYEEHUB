@@ -84,27 +84,30 @@ WSGI_APPLICATION = 'office_emp_mgmt_proj.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-# PostgreSQL (Neon) - Production Database
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'neondb',
-        'USER': 'neondb_owner',
-        'PASSWORD': os.environ.get('DB_PASSWORD', 'npg_M7RXbu5jdZAG'),
-        'HOST': 'ep-old-silence-a1skq2st-pooler.ap-southeast-1.aws.neon.tech',
-        'PORT': '5432',
-        'OPTIONS': {
-            'sslmode': 'require',
-        },
-    }
-}
+# Use SQLite for local development, PostgreSQL for production
+USE_SQLITE = os.environ.get('USE_SQLITE', 'False') == 'True'
 
-# Fallback to SQLite for local development if PostgreSQL is not available
-if os.environ.get('USE_SQLITE', 'False') == 'True':
+if USE_SQLITE:
+    # SQLite - Local Development
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
             'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
+else:
+    # PostgreSQL (Neon.tech) - Production Database
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.environ.get('DB_NAME', 'neondb'),
+            'USER': os.environ.get('DB_USER', 'neondb_owner'),
+            'PASSWORD': os.environ.get('DB_PASSWORD', ''),
+            'HOST': os.environ.get('DB_HOST', 'ep-old-silence-a1skq2st-pooler.ap-southeast-1.aws.neon.tech'),
+            'PORT': os.environ.get('DB_PORT', '5432'),
+            'OPTIONS': {
+                'sslmode': 'require',
+            },
         }
     }
 
