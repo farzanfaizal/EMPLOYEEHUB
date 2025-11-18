@@ -1,7 +1,8 @@
 from django.shortcuts import render, HttpResponse, redirect, get_object_or_404
 from emp_app.models import (
     Employee, Department, Role, Attendance, Leave,
-    FingerprintData, BiometricAttendance, DocumentCategory, EmployeeDocument
+    FingerprintData, BiometricAttendance, DocumentCategory, EmployeeDocument,
+    PerformanceReview, ActivityLog, Announcement, Task
 )
 from django.contrib import messages
 import json
@@ -46,6 +47,21 @@ def index(request):
     avg_salary = Employee.objects.aggregate(Avg('salary'))['salary__avg']
     avg_salary = round(avg_salary) if avg_salary else 0
 
+    # Get active announcements
+    from django.utils import timezone
+    announcements = Announcement.objects.filter(
+        is_active=True
+    ).filter(
+        Q(expiry_date__isnull=True) | Q(expiry_date__gte=timezone.now())
+    ).order_by('-priority', '-published_date')[:3]
+
+    # Get pending tasks
+    pending_tasks = Task.objects.filter(status='pending').count()
+    overdue_tasks = Task.objects.filter(
+        due_date__lt=timezone.now(),
+        status__in=['pending', 'in_progress']
+    ).count()
+
     context = {
         'total_employees': total_employees,
         'total_departments': total_departments,
@@ -57,6 +73,9 @@ def index(request):
         'pending_leaves': pending_leaves,
         'recent_documents': recent_documents,
         'avg_salary': avg_salary,
+        'announcements': announcements,
+        'pending_tasks': pending_tasks,
+        'overdue_tasks': overdue_tasks,
     }
     return render(request, 'index.html', context)
 
@@ -881,3 +900,386 @@ def about(request):
 def contact(request):
     """Display contact information and form"""
     return render(request, 'contact.html')
+
+
+# ==========================================
+# DEPARTMENT & ROLE MANAGEMENT
+# ==========================================
+
+def manageDepartments(request):
+    """Manage departments - Create, Update, Delete"""
+    if request.method == 'POST':
+        action = request.POST.get('action')
+
+        if action == 'add':
+            name = request.POST.get('name')
+            location = request.POST.get('location')
+
+            if name and location:
+                Department.objects.create(name=name, location=location)
+                messages.success(request, f"Department '{name}' created successfully")
+            else:
+                messages.error(request, "Please provide both name and location")
+
+        elif action == 'delete':
+            dept_id = request.POST.get('dept_id')
+            try:
+                dept = Department.objects.get(id=dept_id)
+                dept_name = dept.name
+                # Check if department has employees
+                if dept.employee_set.count() > 0:
+                    messages.warning(request, f"Cannot delete '{dept_name}' - {dept.employee_set.count()} employees assigned")
+                else:
+                    dept.delete()
+                    messages.success(request, f"Department '{dept_name}' deleted successfully")
+            except Department.DoesNotExist:
+                messages.error(request, "Department not found")
+
+        return redirect('/manage/departments')
+
+    departments = Department.objects.annotate(emp_count=Count('employee')).all()
+    context = {'departments': departments}
+    return render(request, 'manage/departments.html', context)
+
+
+def manageRoles(request):
+    """Manage roles - Create, Update, Delete"""
+    if request.method == 'POST':
+        action = request.POST.get('action')
+
+        if action == 'add':
+            name = request.POST.get('name')
+
+            if name:
+                Role.objects.create(name=name)
+                messages.success(request, f"Role '{name}' created successfully")
+            else:
+                messages.error(request, "Please provide role name")
+
+        elif action == 'delete':
+            role_id = request.POST.get('role_id')
+            try:
+                role = Role.objects.get(id=role_id)
+                role_name = role.name
+                # Check if role has employees
+                if role.employee_set.count() > 0:
+                    messages.warning(request, f"Cannot delete '{role_name}' - {role.employee_set.count()} employees assigned")
+                else:
+                    role.delete()
+                    messages.success(request, f"Role '{role_name}' deleted successfully")
+            except Role.DoesNotExist:
+                messages.error(request, "Role not found")
+
+        return redirect('/manage/roles')
+
+    roles = Role.objects.annotate(emp_count=Count('employee')).all()
+    context = {'roles': roles}
+    return render(request, 'manage/roles.html', context)
+
+
+# ==========================================
+# PERFORMANCE REVIEW MANAGEMENT
+# ==========================================
+
+def performanceReviews(request):
+    """List all performance reviews"""
+    reviews = PerformanceReview.objects.select_related('employee').all()
+
+    # Filter by employee if specified
+    emp_id = request.GET.get('employee')
+    if emp_id:
+        reviews = reviews.filter(employee_id=emp_id)
+
+    employees = Employee.objects.all()
+
+    context = {
+        'reviews': reviews,
+        'employees': employees
+    }
+    return render(request, 'performance/reviews_list.html', context)
+
+
+def addPerformanceReview(request):
+    """Add new performance review"""
+    if request.method == 'POST':
+        employee_id = request.POST.get('employee')
+        reviewer = request.POST.get('reviewer')
+        period_start = request.POST.get('period_start')
+        period_end = request.POST.get('period_end')
+        overall_rating = request.POST.get('overall_rating')
+        technical_skills = request.POST.get('technical_skills')
+        communication = request.POST.get('communication')
+        teamwork = request.POST.get('teamwork')
+        leadership = request.POST.get('leadership')
+        productivity = request.POST.get('productivity')
+        strengths = request.POST.get('strengths')
+        improvements = request.POST.get('improvements')
+        goals = request.POST.get('goals')
+        comments = request.POST.get('comments', '')
+
+        try:
+            emp = Employee.objects.get(emp_id=employee_id)
+            review = PerformanceReview.objects.create(
+                employee=emp,
+                reviewer=reviewer,
+                review_period_start=period_start,
+                review_period_end=period_end,
+                overall_rating=overall_rating,
+                technical_skills=technical_skills or None,
+                communication=communication or None,
+                teamwork=teamwork or None,
+                leadership=leadership or None,
+                productivity=productivity or None,
+                strengths=strengths,
+                areas_for_improvement=improvements,
+                goals=goals,
+                comments=comments
+            )
+            messages.success(request, f"Performance review added for {emp.full_name}")
+            return redirect('/performance/reviews')
+        except Employee.DoesNotExist:
+            messages.error(request, "Employee not found")
+            return redirect('/performance/add-review')
+
+    employees = Employee.objects.filter(is_active=True)
+    context = {'employees': employees}
+    return render(request, 'performance/add_review.html', context)
+
+
+# ==========================================
+# TASK MANAGEMENT
+# ==========================================
+
+def tasksDashboard(request):
+    """Task management dashboard"""
+    tasks = Task.objects.select_related('assigned_to').all()
+
+    # Filter by status
+    status_filter = request.GET.get('status')
+    if status_filter:
+        tasks = tasks.filter(status=status_filter)
+
+    # Filter by assigned employee
+    emp_id = request.GET.get('employee')
+    if emp_id:
+        tasks = tasks.filter(assigned_to_id=emp_id)
+
+    # Statistics
+    total_tasks = Task.objects.count()
+    pending_tasks = Task.objects.filter(status='pending').count()
+    in_progress_tasks = Task.objects.filter(status='in_progress').count()
+    completed_tasks = Task.objects.filter(status='completed').count()
+
+    # Overdue tasks
+    overdue_tasks = Task.objects.filter(
+        due_date__lt=datetime.now(),
+        status__in=['pending', 'in_progress']
+    ).count()
+
+    employees = Employee.objects.filter(is_active=True)
+
+    context = {
+        'tasks': tasks,
+        'employees': employees,
+        'total_tasks': total_tasks,
+        'pending_tasks': pending_tasks,
+        'in_progress_tasks': in_progress_tasks,
+        'completed_tasks': completed_tasks,
+        'overdue_tasks': overdue_tasks
+    }
+    return render(request, 'tasks/dashboard.html', context)
+
+
+def addTask(request):
+    """Create new task"""
+    if request.method == 'POST':
+        title = request.POST.get('title')
+        description = request.POST.get('description')
+        employee_id = request.POST.get('employee')
+        assigned_by = request.POST.get('assigned_by', 'Admin')
+        priority = request.POST.get('priority')
+        due_date = request.POST.get('due_date')
+
+        try:
+            emp = Employee.objects.get(emp_id=employee_id)
+            task = Task.objects.create(
+                title=title,
+                description=description,
+                assigned_to=emp,
+                assigned_by=assigned_by,
+                priority=priority,
+                due_date=due_date
+            )
+            messages.success(request, f"Task '{title}' assigned to {emp.full_name}")
+            return redirect('/tasks/dashboard')
+        except Employee.DoesNotExist:
+            messages.error(request, "Employee not found")
+            return redirect('/tasks/add')
+
+    employees = Employee.objects.filter(is_active=True)
+    context = {'employees': employees}
+    return render(request, 'tasks/add_task.html', context)
+
+
+def updateTaskStatus(request, task_id):
+    """Update task status"""
+    if request.method == 'POST':
+        try:
+            task = Task.objects.get(id=task_id)
+            new_status = request.POST.get('status')
+            task.status = new_status
+
+            if new_status == 'completed':
+                task.completed_date = datetime.now()
+
+            task.save()
+            messages.success(request, f"Task status updated to {new_status}")
+        except Task.DoesNotExist:
+            messages.error(request, "Task not found")
+
+    return redirect('/tasks/dashboard')
+
+
+# ==========================================
+# ANNOUNCEMENTS
+# ==========================================
+
+def announcementsDashboard(request):
+    """View all active announcements"""
+    announcements = Announcement.objects.filter(is_active=True).order_by('-priority', '-published_date')
+
+    # Filter expired announcements
+    from django.utils import timezone
+    announcements = announcements.filter(
+        Q(expiry_date__isnull=True) | Q(expiry_date__gte=timezone.now())
+    )
+
+    context = {'announcements': announcements}
+    return render(request, 'announcements/dashboard.html', context)
+
+
+def createAnnouncement(request):
+    """Create new announcement"""
+    if request.method == 'POST':
+        title = request.POST.get('title')
+        content = request.POST.get('content')
+        priority = request.POST.get('priority')
+        author = request.POST.get('author', 'Admin')
+        expiry_date = request.POST.get('expiry_date') or None
+        department_ids = request.POST.getlist('departments')
+
+        announcement = Announcement.objects.create(
+            title=title,
+            content=content,
+            priority=priority,
+            author=author,
+            expiry_date=expiry_date
+        )
+
+        if department_ids:
+            announcement.target_departments.set(department_ids)
+
+        messages.success(request, "Announcement created successfully")
+        return redirect('/announcements/dashboard')
+
+    departments = Department.objects.all()
+    context = {'departments': departments}
+    return render(request, 'announcements/create.html', context)
+
+
+# ==========================================
+# ACTIVITY LOGS
+# ==========================================
+
+def activityLogs(request):
+    """View system activity logs"""
+    logs = ActivityLog.objects.all()[:200]  # Last 200 activities
+
+    # Filter by action
+    action_filter = request.GET.get('action')
+    if action_filter:
+        logs = ActivityLog.objects.filter(action=action_filter)[:200]
+
+    # Filter by date
+    date_filter = request.GET.get('date')
+    if date_filter:
+        logs = ActivityLog.objects.filter(timestamp__date=date_filter)[:200]
+
+    context = {'logs': logs}
+    return render(request, 'admin/activity_logs.html', context)
+
+
+# Helper function to log activities
+def log_activity(user, action, model_name, object_id, object_repr, changes=None, ip_address=None):
+    """Log an activity"""
+    ActivityLog.objects.create(
+        user=user,
+        action=action,
+        model_name=model_name,
+        object_id=object_id,
+        object_repr=object_repr,
+        changes=json.dumps(changes) if changes else None,
+        ip_address=ip_address
+    )
+
+
+# ==========================================
+# BATCH OPERATIONS
+# ==========================================
+
+def batchImportEmployees(request):
+    """Import employees from CSV"""
+    if request.method == 'POST':
+        csv_file = request.FILES.get('csv_file')
+
+        if not csv_file:
+            messages.error(request, "Please upload a CSV file")
+            return redirect('/batch/import')
+
+        if not csv_file.name.endswith('.csv'):
+            messages.error(request, "File must be CSV format")
+            return redirect('/batch/import')
+
+        try:
+            import csv
+            from io import TextIOWrapper
+
+            file_data = TextIOWrapper(csv_file.file, encoding='utf-8')
+            csv_reader = csv.DictReader(file_data)
+
+            imported_count = 0
+            errors = []
+
+            for row in csv_reader:
+                try:
+                    dept = Department.objects.get(name=row['department'])
+                    role = Role.objects.get(name=row['role'])
+
+                    Employee.objects.create(
+                        first_name=row['first_name'],
+                        last_name=row['last_name'],
+                        email=row.get('email', ''),
+                        dept=dept,
+                        role=role,
+                        salary=int(row.get('salary', 0)),
+                        bonus=int(row.get('bonus', 0)),
+                        phone_num=row.get('phone', ''),
+                        hire_date=row['hire_date']
+                    )
+                    imported_count += 1
+                except Exception as e:
+                    errors.append(f"Row error: {str(e)}")
+
+            if imported_count > 0:
+                messages.success(request, f"Successfully imported {imported_count} employees")
+
+            if errors:
+                for error in errors[:5]:  # Show first 5 errors
+                    messages.warning(request, error)
+
+        except Exception as e:
+            messages.error(request, f"Import failed: {str(e)}")
+
+        return redirect('/employees')
+
+    return render(request, 'batch/import.html')
