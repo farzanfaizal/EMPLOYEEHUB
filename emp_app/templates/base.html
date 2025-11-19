@@ -68,8 +68,6 @@
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="/all-emp"><i class="fas fa-list me-2"></i> View All</a></li>
                             <li><a class="dropdown-item" href="/add-emp"><i class="fas fa-user-plus me-2"></i> Add Employee</a></li>
-                            <li><a class="dropdown-item" href="/employees"><i class="fas fa-edit me-2"></i> Update</a></li>
-                            <li><a class="dropdown-item" href="/remove-emp"><i class="fas fa-user-minus me-2"></i> Remove</a></li>
                             <li><a class="dropdown-item" href="/filter-emp"><i class="fas fa-filter me-2"></i> Filter</a></li>
                         </ul>
                     </li>
@@ -78,68 +76,39 @@
                             <i class="fas fa-calendar-check me-1"></i> Attendance
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="/attendance/mark"><i class="fas fa-check me-2"></i> Mark</a></li>
-                            <li><a class="dropdown-item" href="/attendance/view"><i class="fas fa-eye me-2"></i> View</a></li>
-                            <li><a class="dropdown-item" href="/attendance/report"><i class="fas fa-chart-bar me-2"></i> Reports</a></li>
-                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="/attendance/mark"><i class="fas fa-check me-2"></i> Mark Attendance</a></li>
+                            <li><a class="dropdown-item" href="/attendance/view"><i class="fas fa-eye me-2"></i> View Records</a></li>
                             <li><a class="dropdown-item" href="/attendance/apply-leave"><i class="fas fa-plane-departure me-2"></i> Apply Leave</a></li>
-                            <li><a class="dropdown-item" href="/attendance/leaves"><i class="fas fa-list me-2"></i> Leaves</a></li>
                         </ul>
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link-custom dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-fingerprint me-1"></i> Biometric
+                            <i class="fas fa-ellipsis-h me-1"></i> More
                         </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="/biometric/fingerprint"><i class="fas fa-fingerprint me-2"></i> Manage</a></li>
-                            <li><a class="dropdown-item" href="/biometric/logs"><i class="fas fa-history me-2"></i> Logs</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link-custom dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-folder me-1"></i> Documents
-                        </a>
-                        <ul class="dropdown-menu">
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li class="dropdown-header"><i class="fas fa-folder me-2"></i> Documents</li>
                             <li><a class="dropdown-item" href="/documents/dashboard"><i class="fas fa-th-large me-2"></i> Dashboard</a></li>
                             <li><a class="dropdown-item" href="/documents/upload"><i class="fas fa-upload me-2"></i> Upload</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link-custom" href="/analytics/dashboard">
-                            <i class="fas fa-chart-line me-1"></i> Analytics
-                        </a>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link-custom dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-cogs me-1"></i> Manage
-                        </a>
-                        <ul class="dropdown-menu">
+
+                            <li><hr class="dropdown-divider"></li>
+                            <li class="dropdown-header"><i class="fas fa-chart-line me-2"></i> Analytics & Reports</li>
+                            <li><a class="dropdown-item" href="/analytics/dashboard"><i class="fas fa-chart-bar me-2"></i> Analytics</a></li>
+                            <li><a class="dropdown-item" href="/attendance/report"><i class="fas fa-file-alt me-2"></i> Attendance Reports</a></li>
+                            <li><a class="dropdown-item" href="/attendance/leaves"><i class="fas fa-list me-2"></i> Leave Requests</a></li>
+
+                            <li><hr class="dropdown-divider"></li>
+                            <li class="dropdown-header"><i class="fas fa-tools me-2"></i> Tools & Features</li>
+                            <li><a class="dropdown-item" href="/hr-tools/dashboard"><i class="fas fa-calculator me-2"></i> HR Tools</a></li>
+                            <li><a class="dropdown-item" href="/biometric/fingerprint"><i class="fas fa-fingerprint me-2"></i> Biometric</a></li>
+                            <li><a class="dropdown-item" href="/performance/reviews"><i class="fas fa-star me-2"></i> Performance</a></li>
+                            <li><a class="dropdown-item" href="/announcements/dashboard"><i class="fas fa-bullhorn me-2"></i> Announcements</a></li>
+
+                            <li><hr class="dropdown-divider"></li>
+                            <li class="dropdown-header"><i class="fas fa-cogs me-2"></i> Management</li>
                             <li><a class="dropdown-item" href="/manage/departments"><i class="fas fa-building me-2"></i> Departments</a></li>
                             <li><a class="dropdown-item" href="/manage/roles"><i class="fas fa-user-tag me-2"></i> Roles</a></li>
-                            <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" href="/batch/import"><i class="fas fa-file-import me-2"></i> Batch Import</a></li>
                         </ul>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link-custom dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-star me-1"></i> Performance
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="/performance/reviews"><i class="fas fa-chart-line me-2"></i> Reviews</a></li>
-                            <li><a class="dropdown-item" href="/performance/add-review"><i class="fas fa-plus me-2"></i> Add Review</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="/tasks/dashboard"><i class="fas fa-tasks me-2"></i> Tasks</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link-custom" href="/announcements/dashboard">
-                            <i class="fas fa-bullhorn me-1"></i> News
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link-custom" href="/hr-tools/dashboard">
-                            <i class="fas fa-tools me-1"></i> Tools
-                        </a>
                     </li>
                 </ul>
             </div>
