@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 
 # Create your models here.
 
@@ -30,7 +31,7 @@ class Employee(models.Model):
     address = models.TextField(blank=True, null=True, help_text="Residential address")
     emergency_contact = models.CharField(max_length=20, blank=True, null=True, help_text="Emergency contact number")
     is_active = models.BooleanField(default=True, help_text="Is employee currently active")
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(default=timezone.now, help_text="Date when employee was added")
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
@@ -62,7 +63,7 @@ class Attendance(models.Model):
     check_in_time = models.TimeField(null=True, blank=True)
     check_out_time = models.TimeField(null=True, blank=True)
     notes = models.TextField(blank=True, null=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
@@ -94,7 +95,7 @@ class Leave(models.Model):
     end_date = models.DateField()
     reason = models.TextField()
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
-    applied_date = models.DateTimeField(auto_now_add=True)
+    applied_date = models.DateTimeField(default=timezone.now)
     approved_by = models.CharField(max_length=100, blank=True, null=True)
 
     class Meta:
@@ -113,7 +114,7 @@ class FingerprintData(models.Model):
     employee = models.OneToOneField(Employee, on_delete=models.CASCADE, related_name='fingerprint')
     fingerprint_template = models.TextField(help_text="Encoded fingerprint template data")
     fingerprint_image = models.ImageField(upload_to='fingerprints/', null=True, blank=True, help_text="Optional fingerprint image")
-    enrolled_date = models.DateTimeField(auto_now_add=True)
+    enrolled_date = models.DateTimeField(default=timezone.now)
     last_updated = models.DateTimeField(auto_now=True)
     device_id = models.CharField(max_length=100, blank=True, null=True, help_text="ID of the fingerprint device used")
     is_active = models.BooleanField(default=True)
@@ -137,7 +138,7 @@ class BiometricAttendance(models.Model):
     ]
 
     employee = models.ForeignKey(Employee, on_delete=models.CASCADE, related_name='biometric_logs')
-    timestamp = models.DateTimeField(auto_now_add=True)
+    timestamp = models.DateTimeField(default=timezone.now)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES)
     device_id = models.CharField(max_length=100, help_text="ID of the fingerprint device")
     location = models.CharField(max_length=200, blank=True, null=True)
@@ -159,7 +160,7 @@ class DocumentCategory(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField(blank=True)
     icon = models.CharField(max_length=50, default='fa-file', help_text="FontAwesome icon class")
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(default=timezone.now)
 
     class Meta:
         verbose_name = "Document Category"
@@ -186,7 +187,7 @@ class EmployeeDocument(models.Model):
     file_size = models.IntegerField(default=0, help_text="File size in bytes")
     file_type = models.CharField(max_length=50, blank=True)
     uploaded_by = models.CharField(max_length=100, help_text="User who uploaded the document")
-    uploaded_at = models.DateTimeField(auto_now_add=True)
+    uploaded_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
     expiry_date = models.DateField(null=True, blank=True, help_text="For documents that expire (e.g., contracts, certifications)")
     status = models.CharField(max_length=20, choices=DOCUMENT_STATUS, default='active')
@@ -239,7 +240,7 @@ class PerformanceReview(models.Model):
     areas_for_improvement = models.TextField(help_text="Areas needing improvement")
     goals = models.TextField(help_text="Goals for next period")
     comments = models.TextField(blank=True, null=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
@@ -269,7 +270,7 @@ class ActivityLog(models.Model):
     object_repr = models.CharField(max_length=200, help_text="String representation of object")
     changes = models.TextField(blank=True, null=True, help_text="JSON of changes made")
     ip_address = models.GenericIPAddressField(null=True, blank=True)
-    timestamp = models.DateTimeField(auto_now_add=True)
+    timestamp = models.DateTimeField(default=timezone.now)
 
     class Meta:
         ordering = ['-timestamp']
@@ -293,7 +294,7 @@ class Announcement(models.Model):
     content = models.TextField()
     priority = models.CharField(max_length=20, choices=PRIORITY_CHOICES, default='medium')
     author = models.CharField(max_length=100)
-    published_date = models.DateTimeField(auto_now_add=True)
+    published_date = models.DateTimeField(default=timezone.now)
     expiry_date = models.DateTimeField(null=True, blank=True, help_text="When announcement expires")
     is_active = models.BooleanField(default=True)
     target_departments = models.ManyToManyField(Department, blank=True, help_text="Specific departments (leave empty for all)")
@@ -332,7 +333,7 @@ class Task(models.Model):
     due_date = models.DateTimeField()
     completed_date = models.DateTimeField(null=True, blank=True)
     notes = models.TextField(blank=True, null=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
