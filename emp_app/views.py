@@ -47,20 +47,28 @@ def index(request):
     avg_salary = Employee.objects.aggregate(Avg('salary'))['salary__avg']
     avg_salary = round(avg_salary) if avg_salary else 0
 
-    # Get active announcements
-    from django.utils import timezone
-    announcements = Announcement.objects.filter(
-        is_active=True
-    ).filter(
-        Q(expiry_date__isnull=True) | Q(expiry_date__gte=timezone.now())
-    ).order_by('-priority', '-published_date')[:3]
+    # Get active announcements (backwards compatible - only if tables exist)
+    announcements = []
+    pending_tasks = 0
+    overdue_tasks = 0
 
-    # Get pending tasks
-    pending_tasks = Task.objects.filter(status='pending').count()
-    overdue_tasks = Task.objects.filter(
-        due_date__lt=timezone.now(),
-        status__in=['pending', 'in_progress']
-    ).count()
+    try:
+        from django.utils import timezone
+        announcements = Announcement.objects.filter(
+            is_active=True
+        ).filter(
+            Q(expiry_date__isnull=True) | Q(expiry_date__gte=timezone.now())
+        ).order_by('-priority', '-published_date')[:3]
+
+        # Get pending tasks
+        pending_tasks = Task.objects.filter(status='pending').count()
+        overdue_tasks = Task.objects.filter(
+            due_date__lt=timezone.now(),
+            status__in=['pending', 'in_progress']
+        ).count()
+    except Exception:
+        # Tables don't exist yet (migrations not run)
+        pass
 
     context = {
         'total_employees': total_employees,
