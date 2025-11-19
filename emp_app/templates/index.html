@@ -6,19 +6,19 @@
 
 {% block content %}
 <!-- Enhanced Hero Section with Quick Search -->
-<section class="hero-section" style="padding: 3rem 0;">
+<section class="hero-section">
     <div class="container">
-        <div class="row align-items-center">
+        <div class="row align-items-center g-4">
             <div class="col-lg-6 mb-4 mb-lg-0">
-                <h1 class="hero-title" style="font-size: 2.5rem;">Welcome to EmployeeHub</h1>
-                <p class="hero-subtitle" style="font-size: 1.1rem;">Your comprehensive workforce management dashboard</p>
+                <h1 class="hero-title">Welcome to EmployeeHub</h1>
+                <p class="hero-subtitle">Your comprehensive workforce management dashboard</p>
 
                 <!-- Quick Search -->
                 <div class="mt-4">
                     <form action="/filter-emp" method="GET" class="d-flex gap-2">
-                        <div class="input-group" style="max-width: 400px;">
+                        <div class="input-group" style="max-width: 450px;">
                             <span class="input-group-text" style="background: white; border-right: none;">
-                                <i class="fas fa-search" style="color: #667eea;"></i>
+                                <i class="fas fa-search" style="color: #1e3a8a;"></i>
                             </span>
                             <input type="text" name="name" class="form-control" placeholder="Quick search employees..." style="border-left: none;">
                             <button type="submit" class="btn btn-gradient">Search</button>
@@ -73,7 +73,7 @@
 </section>
 
 <!-- Dashboard Widgets -->
-<section class="page-container" style="margin-top: -2rem;">
+<section class="page-container" style="margin-top: 0;">
     <div class="row g-4">
         <!-- Today's Attendance Widget -->
         <div class="col-lg-4 col-md-6">
@@ -153,7 +153,7 @@
 </section>
 
 <!-- Recent Employees & Documents -->
-<section class="page-container">
+<section class="page-container" style="margin-top: 2rem;">
     <div class="row g-4">
         <!-- Recent Employees -->
         <div class="col-lg-6">
@@ -240,7 +240,7 @@
 </section>
 
 <!-- Features Overview -->
-<section class="page-container">
+<section class="page-container" style="margin-top: 3rem;">
     <h2 class="section-title">Platform Features</h2>
     <p class="section-subtitle">Everything you need to manage your workforce efficiently</p>
 
