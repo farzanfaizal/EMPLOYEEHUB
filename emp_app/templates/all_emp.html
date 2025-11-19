@@ -74,32 +74,32 @@
 
                     <div class="row g-2 mb-3">
                         <div class="col-6">
-                            <div class="info-box-corporate" style="background: var(--bg-light); padding: 0.75rem; border-left-color: var(--primary-color);">
-                                <div style="font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 0.25rem; font-weight: 500;">Salary</div>
-                                <div style="font-weight: 700; color: var(--primary-color); font-size: 0.9375rem;">${{ emp.salary|floatformat:0 }}</div>
+                            <div class="info-card" style="background: #f7fafc; padding: 0.75rem; border-radius: 0.5rem; border-left: 3px solid #667eea;">
+                                <div style="font-size: 0.75rem; color: #718096; margin-bottom: 0.25rem;">Salary</div>
+                                <div style="font-weight: 600; color: #667eea;">${{ emp.salary|floatformat:0 }}</div>
                             </div>
                         </div>
                         <div class="col-6">
-                            <div class="info-box-corporate success" style="background: var(--bg-light); padding: 0.75rem;">
-                                <div style="font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 0.25rem; font-weight: 500;">Bonus</div>
-                                <div style="font-weight: 700; color: var(--success-color); font-size: 0.9375rem;">${{ emp.bonus|floatformat:0 }}</div>
+                            <div class="info-card" style="background: #f7fafc; padding: 0.75rem; border-radius: 0.5rem; border-left: 3px solid #43e97b;">
+                                <div style="font-size: 0.75rem; color: #718096; margin-bottom: 0.25rem;">Bonus</div>
+                                <div style="font-weight: 600; color: #43e97b;">${{ emp.bonus|floatformat:0 }}</div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="d-flex justify-content-between align-items-center pt-3 mb-2" style="border-top: 1px solid var(--border-color);">
+                    <div class="d-flex justify-content-between align-items-center pt-3 mb-2" style="border-top: 1px solid #e2e8f0;">
                         <div>
-                            <i class="fas fa-phone-alt me-1" style="color: var(--primary-color);"></i>
-                            <span style="font-size: 0.875rem; color: var(--text-secondary);">{{ emp.phone_num }}</span>
+                            <i class="fas fa-phone-alt me-1" style="color: #667eea;"></i>
+                            <span style="font-size: 0.875rem;">{{ emp.phone_num }}</span>
                         </div>
                         <div>
-                            <i class="fas fa-map-marker-alt me-1" style="color: var(--accent-color);"></i>
-                            <span style="font-size: 0.875rem; color: var(--text-secondary);">{{ emp.dept.location }}</span>
+                            <i class="fas fa-map-marker-alt me-1" style="color: #f5576c;"></i>
+                            <span style="font-size: 0.875rem;">{{ emp.dept.location }}</span>
                         </div>
                     </div>
 
                     <div class="mb-3">
-                        <small style="color: var(--text-secondary);">
+                        <small style="color: #718096;">
                             <i class="fas fa-calendar-alt me-1"></i>
                             Joined: {{ emp.hire_date|date:"M d, Y" }}
                         </small>
@@ -154,24 +154,24 @@
                     <tbody>
                         {% for emp in emps %}
                         <tr class="searchable-item" data-search="{{ emp.first_name|lower }} {{ emp.last_name|lower }} {{ emp.dept.name|lower }} {{ emp.role.name|lower }}">
-                            <td><strong style="color: var(--text-primary);">#{{ emp.emp_id }}</strong></td>
+                            <td><strong>#{{ emp.emp_id }}</strong></td>
                             <td>
                                 <div class="d-flex align-items-center">
-                                    <div class="avatar-corporate avatar-sm me-2">
+                                    <div style="width: 35px; height: 35px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; margin-right: 0.75rem;">
                                         {{ emp.first_name|first }}{{ emp.last_name|first }}
                                     </div>
                                     <div>
-                                        <div style="font-weight: 600; color: var(--text-primary);">{{ emp.first_name }} {{ emp.last_name }}</div>
+                                        <div style="font-weight: 600;">{{ emp.first_name }} {{ emp.last_name }}</div>
                                     </div>
                                 </div>
                             </td>
-                            <td style="color: var(--text-secondary);">{{ emp.dept.name }}</td>
-                            <td style="color: var(--text-secondary);">{{ emp.role.name }}</td>
-                            <td><strong style="color: var(--primary-color);">${{ emp.salary|floatformat:0 }}</strong></td>
-                            <td><strong style="color: var(--success-color);">${{ emp.bonus|floatformat:0 }}</strong></td>
-                            <td style="color: var(--text-secondary);">{{ emp.phone_num }}</td>
-                            <td style="color: var(--text-secondary);">{{ emp.dept.location }}</td>
-                            <td style="color: var(--text-secondary);">{{ emp.hire_date|date:"M d, Y" }}</td>
+                            <td>{{ emp.dept.name }}</td>
+                            <td>{{ emp.role.name }}</td>
+                            <td><strong style="color: #667eea;">${{ emp.salary|floatformat:0 }}</strong></td>
+                            <td><strong style="color: #43e97b;">${{ emp.bonus|floatformat:0 }}</strong></td>
+                            <td>{{ emp.phone_num }}</td>
+                            <td>{{ emp.dept.location }}</td>
+                            <td>{{ emp.hire_date|date:"M d, Y" }}</td>
                             <td>
                                 <div class="d-flex gap-2">
                                     <a href="{% url 'update_emp' emp.emp_id %}" class="btn btn-sm btn-gradient" title="Edit">
