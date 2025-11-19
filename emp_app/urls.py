@@ -51,4 +51,27 @@ urlpatterns = [
 
     # Contact Page
     path('contact', views.contact, name='contact'),
+
+    # Department & Role Management
+    path('manage/departments', views.manageDepartments, name='manage-departments'),
+    path('manage/roles', views.manageRoles, name='manage-roles'),
+
+    # Performance Reviews
+    path('performance/reviews', views.performanceReviews, name='performance-reviews'),
+    path('performance/add-review', views.addPerformanceReview, name='add-performance-review'),
+
+    # Task Management
+    path('tasks/dashboard', views.tasksDashboard, name='tasks-dashboard'),
+    path('tasks/add', views.addTask, name='add-task'),
+    path('tasks/<int:task_id>/update-status', views.updateTaskStatus, name='update-task-status'),
+
+    # Announcements
+    path('announcements/dashboard', views.announcementsDashboard, name='announcements-dashboard'),
+    path('announcements/create', views.createAnnouncement, name='create-announcement'),
+
+    # Activity Logs
+    path('admin/activity-logs', views.activityLogs, name='activity-logs'),
+
+    # Batch Operations
+    path('batch/import', views.batchImportEmployees, name='batch-import'),
 ]
