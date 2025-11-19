@@ -21,8 +21,8 @@
 <section class="page-container mt-5">
     <div class="row justify-content-center">
         <div class="col-lg-8">
-            <div class="text-center mb-4">
-                <div class="animate-scale-in" style="width: 80px; height: 80px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem;">
+            <div class="text-center mb-5">
+                <div class="animate-scale-in" style="width: 72px; height: 72px; background: var(--primary-gradient); border-radius: 0.75rem; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.25rem; box-shadow: 0 4px 12px rgba(26, 54, 93, 0.15);">
                     <i class="fas fa-user-plus fa-2x" style="color: white;"></i>
                 </div>
                 <h1 class="section-title mb-2 animate-fade-in-down">Add New Employee</h1>
@@ -149,17 +149,29 @@
             <!-- Info Cards -->
             <div class="row g-3 mt-4">
                 <div class="col-md-6">
-                    <div class="card-modern animate-delay-1" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
-                        <i class="fas fa-lightbulb fa-2x mb-2"></i>
-                        <h6 style="font-weight: 600;">Pro Tip</h6>
-                        <p style="opacity: 0.9; margin: 0; font-size: 0.875rem;">Ensure all information is accurate before submission. You can always update employee details later.</p>
+                    <div class="info-box-corporate animate-delay-1" style="padding: 1.5rem; background: var(--bg-light); border-left-color: var(--primary-color); border-left-width: 4px;">
+                        <div class="d-flex align-items-start gap-3">
+                            <div style="width: 40px; height: 40px; background: var(--primary-gradient); border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                <i class="fas fa-lightbulb" style="color: white;"></i>
+                            </div>
+                            <div>
+                                <h6 style="font-weight: 600; color: var(--text-primary); margin-bottom: 0.5rem;">Pro Tip</h6>
+                                <p style="margin: 0; font-size: 0.875rem; color: var(--text-secondary); line-height: 1.6;">Ensure all information is accurate before submission. You can always update employee details later.</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <div class="card-modern animate-delay-2" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white;">
-                        <i class="fas fa-info-circle fa-2x mb-2"></i>
-                        <h6 style="font-weight: 600;">Quick Info</h6>
-                        <p style="opacity: 0.9; margin: 0; font-size: 0.875rem;">All fields marked with (*) are required. Phone numbers must be 10 digits.</p>
+                    <div class="info-box-corporate animate-delay-2" style="padding: 1.5rem; background: var(--bg-light); border-left-color: var(--accent-color); border-left-width: 4px;">
+                        <div class="d-flex align-items-start gap-3">
+                            <div style="width: 40px; height: 40px; background: var(--accent-gradient); border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                <i class="fas fa-info-circle" style="color: white;"></i>
+                            </div>
+                            <div>
+                                <h6 style="font-weight: 600; color: var(--text-primary); margin-bottom: 0.5rem;">Quick Info</h6>
+                                <p style="margin: 0; font-size: 0.875rem; color: var(--text-secondary); line-height: 1.6;">All fields marked with (*) are required. Phone numbers must be 10 digits.</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
