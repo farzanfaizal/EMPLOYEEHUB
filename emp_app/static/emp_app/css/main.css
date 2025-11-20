@@ -2117,3 +2117,386 @@ small {
         justify-content: flex-end !important;
     }
 }
+
+/* ============================================
+   CLAUDE.AI INSPIRED NAVIGATION
+   ============================================ */
+
+/* Main Navigation Bar */
+.navbar-claude {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.container-claude {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+}
+
+/* Logo */
+.logo-claude {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    color: #1a1a1a;
+    font-weight: 600;
+    font-size: 18px;
+    letter-spacing: -0.02em;
+    transition: opacity 0.2s ease;
+}
+
+.logo-claude:hover {
+    opacity: 0.7;
+    color: #1a1a1a;
+}
+
+.logo-image {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+}
+
+.logo-text {
+    font-weight: 600;
+    color: #1a1a1a;
+}
+
+/* Center Navigation Links */
+.nav-center-claude {
+    display: none;
+    align-items: center;
+    gap: 4px;
+    flex: 1;
+    justify-content: center;
+    margin: 0 40px;
+}
+
+@media (min-width: 1024px) {
+    .nav-center-claude {
+        display: flex;
+    }
+}
+
+.nav-link-claude {
+    position: relative;
+    padding: 8px 16px;
+    color: #525252;
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 500;
+    border-radius: 8px;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    white-space: nowrap;
+}
+
+.nav-link-claude:hover {
+    color: #1a1a1a;
+    background: rgba(0, 0, 0, 0.04);
+}
+
+.nav-link-claude.active {
+    color: #1a1a1a;
+    background: rgba(0, 0, 0, 0.06);
+}
+
+/* Right Actions */
+.nav-actions-claude {
+    display: none;
+    align-items: center;
+    gap: 12px;
+}
+
+@media (min-width: 1024px) {
+    .nav-actions-claude {
+        display: flex;
+    }
+}
+
+/* Claude-style Buttons */
+.btn-claude-secondary {
+    padding: 10px 20px;
+    font-size: 15px;
+    font-weight: 500;
+    color: #525252;
+    background: transparent;
+    border: none;
+    border-radius: 10px;
+    text-decoration: none;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    white-space: nowrap;
+}
+
+.btn-claude-secondary:hover {
+    color: #1a1a1a;
+    background: rgba(0, 0, 0, 0.04);
+}
+
+.btn-claude-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    font-size: 15px;
+    font-weight: 600;
+    color: white;
+    background: #0066CC;
+    border: none;
+    border-radius: 10px;
+    text-decoration: none;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    white-space: nowrap;
+}
+
+.btn-claude-primary:hover {
+    background: #0052A3;
+    box-shadow: 0 4px 12px rgba(0, 102, 204, 0.2);
+    transform: translateY(-1px);
+    color: white;
+}
+
+.btn-claude-primary:active {
+    transform: translateY(0);
+}
+
+/* Mobile Menu Button */
+.mobile-menu-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: #525252;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.mobile-menu-btn:hover {
+    background: rgba(0, 0, 0, 0.04);
+    color: #1a1a1a;
+}
+
+@media (min-width: 1024px) {
+    .mobile-menu-btn {
+        display: none;
+    }
+}
+
+/* Mobile Menu Overlay */
+.mobile-menu-claude {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    z-index: 2000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.mobile-menu-claude.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.mobile-menu-content {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    max-width: 400px;
+    background: white;
+    overflow-y: auto;
+    transform: translateX(100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: -4px 0 24px rgba(0, 0, 0, 0.1);
+}
+
+.mobile-menu-claude.active .mobile-menu-content {
+    transform: translateX(0);
+}
+
+/* Mobile Menu Close Button */
+.mobile-menu-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: transparent;
+    color: #525252;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    z-index: 10;
+}
+
+.mobile-menu-close:hover {
+    background: rgba(0, 0, 0, 0.04);
+    color: #1a1a1a;
+}
+
+/* Mobile Menu Links */
+.mobile-menu-links {
+    padding: 80px 24px 40px;
+}
+
+.mobile-nav-link {
+    display: block;
+    padding: 16px 20px;
+    color: #1a1a1a;
+    text-decoration: none;
+    font-size: 18px;
+    font-weight: 600;
+    border-radius: 12px;
+    transition: all 0.2s ease;
+}
+
+.mobile-nav-link:hover {
+    background: rgba(0, 0, 0, 0.04);
+    color: #0066CC;
+}
+
+.mobile-nav-link-sub {
+    display: block;
+    padding: 12px 20px 12px 40px;
+    color: #525252;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 500;
+    border-radius: 10px;
+    transition: all 0.2s ease;
+}
+
+.mobile-nav-link-sub:hover {
+    background: rgba(0, 0, 0, 0.04);
+    color: #0066CC;
+}
+
+.mobile-menu-divider {
+    height: 1px;
+    background: rgba(0, 0, 0, 0.08);
+    margin: 16px 0;
+}
+
+.mobile-menu-section-title {
+    padding: 12px 20px 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #a3a3a3;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.mobile-menu-cta {
+    margin-top: 24px;
+    padding: 0 20px;
+}
+
+/* Body Scroll Lock When Menu Open */
+body.menu-open {
+    overflow: hidden;
+}
+
+/* Spacer for Fixed Navbar */
+main {
+    margin-top: 64px;
+}
+
+/* Smooth Scroll Behavior */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Active Link Indicator */
+.nav-link-claude.active::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 16px;
+    right: 16px;
+    height: 2px;
+    background: #0066CC;
+    border-radius: 2px 2px 0 0;
+}
+
+/* Hover Animation for Primary Button */
+.btn-claude-primary svg {
+    transition: transform 0.2s ease;
+}
+
+.btn-claude-primary:hover svg {
+    transform: translateX(2px);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 640px) {
+    .container-claude {
+        padding: 0 16px;
+    }
+
+    .mobile-menu-content {
+        max-width: 100%;
+    }
+
+    .mobile-nav-link {
+        font-size: 17px;
+    }
+}
+
+/* Focus States for Accessibility */
+.nav-link-claude:focus,
+.btn-claude-primary:focus,
+.btn-claude-secondary:focus,
+.mobile-menu-btn:focus,
+.mobile-menu-close:focus {
+    outline: 2px solid #0066CC;
+    outline-offset: 2px;
+}
+
+/* Loading State */
+.btn-claude-primary.loading {
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+.btn-claude-primary.loading::after {
+    content: '';
+    width: 12px;
+    height: 12px;
+    border: 2px solid white;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+    margin-left: 8px;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}

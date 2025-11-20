@@ -42,75 +42,81 @@
         {% endfor %}
     {% endif %}
 
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-custom">
-        <div class="container">
-            <a class="navbar-brand-custom" href="/" aria-label="EmployeeHub Home">
-                <img src="{% static 'emp_app/images/ehub.png' %}" alt="EmployeeHub Logo" width="40" height="40">
-                <span>EmployeeHub</span>
+    <!-- Navigation - Claude.ai Inspired -->
+    <nav class="navbar-claude">
+        <div class="container-claude">
+            <!-- Logo -->
+            <a class="logo-claude" href="/" aria-label="EmployeeHub Home">
+                <img src="{% static 'emp_app/images/ehub.png' %}" alt="Logo" class="logo-image">
+                <span class="logo-text">EmployeeHub</span>
             </a>
 
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
+            <!-- Desktop Navigation -->
+            <div class="nav-center-claude">
+                <a href="/" class="nav-link-claude {% block nav_home %}{% endblock %}">Home</a>
+                <a href="/all-emp" class="nav-link-claude {% block nav_all_emp %}{% endblock %}">Employees</a>
+                <a href="/add-emp" class="nav-link-claude {% block nav_add %}{% endblock %}">Add Employee</a>
+                <a href="/filter-emp" class="nav-link-claude {% block nav_filter %}{% endblock %}">Filter</a>
+                <a href="/about" class="nav-link-claude">About</a>
+            </div>
+
+            <!-- CTA Button -->
+            <div class="nav-actions-claude">
+                <a href="/contact" class="btn-claude-secondary">Contact</a>
+                <a href="/add-emp" class="btn-claude-primary">
+                    <span>Quick Add</span>
+                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M6 1V11M1 6H11" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </a>
+            </div>
+
+            <!-- Mobile Menu Button -->
+            <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle menu">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
             </button>
+        </div>
 
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link-custom {% block nav_home %}{% endblock %}" href="/">
-                            <i class="fas fa-home me-1"></i> Home
-                        </a>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link-custom dropdown-toggle {% block nav_employees %}{% endblock %}" href="#" role="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-users me-1"></i> Employees
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="/all-emp"><i class="fas fa-list me-2"></i> View All</a></li>
-                            <li><a class="dropdown-item" href="/add-emp"><i class="fas fa-user-plus me-2"></i> Add Employee</a></li>
-                            <li><a class="dropdown-item" href="/filter-emp"><i class="fas fa-filter me-2"></i> Filter</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link-custom dropdown-toggle {% block nav_attendance %}{% endblock %}" href="#" role="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-calendar-check me-1"></i> Attendance
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="/attendance/mark"><i class="fas fa-check me-2"></i> Mark Attendance</a></li>
-                            <li><a class="dropdown-item" href="/attendance/view"><i class="fas fa-eye me-2"></i> View Records</a></li>
-                            <li><a class="dropdown-item" href="/attendance/apply-leave"><i class="fas fa-plane-departure me-2"></i> Apply Leave</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link-custom dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-ellipsis-h me-1"></i> More
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li class="dropdown-header"><i class="fas fa-folder me-2"></i> Documents</li>
-                            <li><a class="dropdown-item" href="/documents/dashboard"><i class="fas fa-th-large me-2"></i> Dashboard</a></li>
-                            <li><a class="dropdown-item" href="/documents/upload"><i class="fas fa-upload me-2"></i> Upload</a></li>
+        <!-- Mobile Menu Overlay -->
+        <div class="mobile-menu-claude" id="mobileMenu">
+            <div class="mobile-menu-content">
+                <button class="mobile-menu-close" id="mobileMenuClose" aria-label="Close menu">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
 
-                            <li><hr class="dropdown-divider"></li>
-                            <li class="dropdown-header"><i class="fas fa-chart-line me-2"></i> Analytics & Reports</li>
-                            <li><a class="dropdown-item" href="/analytics/dashboard"><i class="fas fa-chart-bar me-2"></i> Analytics</a></li>
-                            <li><a class="dropdown-item" href="/attendance/report"><i class="fas fa-file-alt me-2"></i> Attendance Reports</a></li>
-                            <li><a class="dropdown-item" href="/attendance/leaves"><i class="fas fa-list me-2"></i> Leave Requests</a></li>
+                <div class="mobile-menu-links">
+                    <a href="/" class="mobile-nav-link">Home</a>
+                    <a href="/all-emp" class="mobile-nav-link">View Employees</a>
+                    <a href="/add-emp" class="mobile-nav-link">Add Employee</a>
+                    <a href="/filter-emp" class="mobile-nav-link">Filter</a>
 
-                            <li><hr class="dropdown-divider"></li>
-                            <li class="dropdown-header"><i class="fas fa-tools me-2"></i> Tools & Features</li>
-                            <li><a class="dropdown-item" href="/hr-tools/dashboard"><i class="fas fa-calculator me-2"></i> HR Tools</a></li>
-                            <li><a class="dropdown-item" href="/biometric/fingerprint"><i class="fas fa-fingerprint me-2"></i> Biometric</a></li>
-                            <li><a class="dropdown-item" href="/performance/reviews"><i class="fas fa-star me-2"></i> Performance</a></li>
-                            <li><a class="dropdown-item" href="/announcements/dashboard"><i class="fas fa-bullhorn me-2"></i> Announcements</a></li>
+                    <div class="mobile-menu-divider"></div>
+                    <div class="mobile-menu-section-title">Attendance</div>
+                    <a href="/attendance/mark" class="mobile-nav-link-sub">Mark Attendance</a>
+                    <a href="/attendance/view" class="mobile-nav-link-sub">View Records</a>
+                    <a href="/attendance/apply-leave" class="mobile-nav-link-sub">Apply Leave</a>
 
-                            <li><hr class="dropdown-divider"></li>
-                            <li class="dropdown-header"><i class="fas fa-cogs me-2"></i> Management</li>
-                            <li><a class="dropdown-item" href="/manage/departments"><i class="fas fa-building me-2"></i> Departments</a></li>
-                            <li><a class="dropdown-item" href="/manage/roles"><i class="fas fa-user-tag me-2"></i> Roles</a></li>
-                            <li><a class="dropdown-item" href="/batch/import"><i class="fas fa-file-import me-2"></i> Batch Import</a></li>
-                        </ul>
-                    </li>
-                </ul>
+                    <div class="mobile-menu-divider"></div>
+                    <div class="mobile-menu-section-title">More</div>
+                    <a href="/documents/dashboard" class="mobile-nav-link-sub">Documents</a>
+                    <a href="/analytics/dashboard" class="mobile-nav-link-sub">Analytics</a>
+                    <a href="/hr-tools/dashboard" class="mobile-nav-link-sub">HR Tools</a>
+
+                    <div class="mobile-menu-divider"></div>
+                    <a href="/about" class="mobile-nav-link">About</a>
+                    <a href="/contact" class="mobile-nav-link">Contact</a>
+
+                    <div class="mobile-menu-cta">
+                        <a href="/add-emp" class="btn-claude-primary w-100">Quick Add Employee</a>
+                    </div>
+                </div>
             </div>
         </div>
     </nav>
