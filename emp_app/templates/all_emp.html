@@ -43,7 +43,7 @@
     <!-- View Toggle -->
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
         <div>
-            <span class="text-muted">Total Employees: <strong class="text-gradient">{{ emps|length }}</strong></span>
+            <span class="text-muted">Total Employees: <strong class="text-primary-color">{{ emps|length }}</strong></span>
         </div>
         <div class="btn-group" role="group" aria-label="View toggle">
             <button type="button" class="btn btn-sm btn-outline-gradient active" id="cardView" aria-pressed="true">
@@ -59,7 +59,7 @@
     <div id="cardViewContainer">
         <div class="row g-4">
             {% for emp in emps %}
-            <div class="col-lg-4 col-md-6 searchable-item animate-fade-in-up animate-delay-{{ forloop.counter|divisibleby:6|yesno:"1,2,3,4,5,6" }}" data-search="{{ emp.first_name|lower }} {{ emp.last_name|lower }} {{ emp.dept.name|lower }} {{ emp.role.name|lower }}">
+            <div class="col-lg-4 col-md-6 searchable-item animate-fade-in-up" data-search="{{ emp.first_name|lower }} {{ emp.last_name|lower }} {{ emp.dept.name|lower }} {{ emp.role.name|lower }}">
                 <div class="employee-card">
                     <div class="d-flex align-items-start mb-3">
                         <div class="employee-avatar me-3">
@@ -74,32 +74,32 @@
 
                     <div class="row g-2 mb-3">
                         <div class="col-6">
-                            <div class="info-card" style="background: #f7fafc; padding: 0.75rem; border-radius: 0.5rem; border-left: 3px solid #667eea;">
-                                <div style="font-size: 0.75rem; color: #718096; margin-bottom: 0.25rem;">Salary</div>
-                                <div style="font-weight: 600; color: #667eea;">${{ emp.salary|floatformat:0 }}</div>
+                            <div class="badge badge-primary p-3 w-100 text-left">
+                                <div class="fs-6 text-muted mb-1">Salary</div>
+                                <div class="fw-semibold">${{ emp.salary|floatformat:0 }}</div>
                             </div>
                         </div>
                         <div class="col-6">
-                            <div class="info-card" style="background: #f7fafc; padding: 0.75rem; border-radius: 0.5rem; border-left: 3px solid #43e97b;">
-                                <div style="font-size: 0.75rem; color: #718096; margin-bottom: 0.25rem;">Bonus</div>
-                                <div style="font-weight: 600; color: #43e97b;">${{ emp.bonus|floatformat:0 }}</div>
+                            <div class="badge badge-success p-3 w-100 text-left">
+                                <div class="fs-6 text-muted mb-1">Bonus</div>
+                                <div class="fw-semibold">${{ emp.bonus|floatformat:0 }}</div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="d-flex justify-content-between align-items-center pt-3 mb-2" style="border-top: 1px solid #e2e8f0;">
+                    <div class="d-flex justify-content-between align-items-center pt-3 mb-2 border-top">
                         <div>
-                            <i class="fas fa-phone-alt me-1" style="color: #667eea;"></i>
-                            <span style="font-size: 0.875rem;">{{ emp.phone_num }}</span>
+                            <i class="fas fa-phone-alt me-1 text-primary-color"></i>
+                            <span class="fs-5">{{ emp.phone_num }}</span>
                         </div>
                         <div>
-                            <i class="fas fa-map-marker-alt me-1" style="color: #f5576c;"></i>
-                            <span style="font-size: 0.875rem;">{{ emp.dept.location }}</span>
+                            <i class="fas fa-map-marker-alt me-1 text-muted"></i>
+                            <span class="fs-5">{{ emp.dept.location }}</span>
                         </div>
                     </div>
 
                     <div class="mb-3">
-                        <small style="color: #718096;">
+                        <small class="text-muted">
                             <i class="fas fa-calendar-alt me-1"></i>
                             Joined: {{ emp.hire_date|date:"M d, Y" }}
                         </small>
@@ -133,7 +133,7 @@
     </div>
 
     <!-- Table View (Hidden by default) -->
-    <div id="tableViewContainer" style="display: none;">
+    <div id="tableViewContainer" class="d-none">
         <div class="table-container">
             <div class="table-responsive">
                 <table class="table-modern">
@@ -157,18 +157,16 @@
                             <td><strong>#{{ emp.emp_id }}</strong></td>
                             <td>
                                 <div class="d-flex align-items-center">
-                                    <div style="width: 35px; height: 35px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; margin-right: 0.75rem;">
+                                    <div class="employee-avatar me-3" style="width: 35px; height: 35px; font-size: 14px;">
                                         {{ emp.first_name|first }}{{ emp.last_name|first }}
                                     </div>
-                                    <div>
-                                        <div style="font-weight: 600;">{{ emp.first_name }} {{ emp.last_name }}</div>
-                                    </div>
+                                    <div class="fw-semibold">{{ emp.first_name }} {{ emp.last_name }}</div>
                                 </div>
                             </td>
                             <td>{{ emp.dept.name }}</td>
                             <td>{{ emp.role.name }}</td>
-                            <td><strong style="color: #667eea;">${{ emp.salary|floatformat:0 }}</strong></td>
-                            <td><strong style="color: #43e97b;">${{ emp.bonus|floatformat:0 }}</strong></td>
+                            <td><strong class="text-primary-color">${{ emp.salary|floatformat:0 }}</strong></td>
+                            <td><strong class="text-muted">${{ emp.bonus|floatformat:0 }}</strong></td>
                             <td>{{ emp.phone_num }}</td>
                             <td>{{ emp.dept.location }}</td>
                             <td>{{ emp.hire_date|date:"M d, Y" }}</td>
@@ -202,8 +200,8 @@ const tableViewContainer = document.getElementById('tableViewContainer');
 
 if (cardView && tableView) {
     cardView.addEventListener('click', () => {
-        cardViewContainer.style.display = 'block';
-        tableViewContainer.style.display = 'none';
+        cardViewContainer.classList.remove('d-none');
+        tableViewContainer.classList.add('d-none');
         cardView.classList.add('active');
         tableView.classList.remove('active');
         cardView.setAttribute('aria-pressed', 'true');
@@ -211,8 +209,8 @@ if (cardView && tableView) {
     });
 
     tableView.addEventListener('click', () => {
-        cardViewContainer.style.display = 'none';
-        tableViewContainer.style.display = 'block';
+        cardViewContainer.classList.add('d-none');
+        tableViewContainer.classList.remove('d-none');
         tableView.classList.add('active');
         cardView.classList.remove('active');
         tableView.setAttribute('aria-pressed', 'true');
@@ -232,8 +230,10 @@ if (searchInput) {
             const searchData = item.dataset.search;
 
             if (searchData.includes(searchTerm)) {
+                item.classList.remove('d-none');
                 item.style.display = '';
             } else {
+                item.classList.add('d-none');
                 item.style.display = 'none';
             }
         });
