@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Coming Soon - EmployeeHub{% endblock %}
+
+{% block content %}
+<section class="page-container">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="empty-state">
+                <div class="empty-state-icon">
+                    <i class="fas fa-rocket"></i>
+                </div>
+                <h1 class="empty-state-title">Coming Soon!</h1>
+                <p class="empty-state-description">
+                    This feature is currently under development and will be available soon.
+                    We're working hard to bring you the best experience possible.
+                </p>
+                <div class="mt-4">
+                    <a href="/" class="btn btn-gradient me-2">
+                        <i class="fas fa-home me-2"></i> Back to Home
+                    </a>
+                    <a href="/all-emp" class="btn btn-outline-gradient">
+                        <i class="fas fa-users me-2"></i> View Employees
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

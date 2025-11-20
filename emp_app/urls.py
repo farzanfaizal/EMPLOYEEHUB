@@ -74,4 +74,15 @@ urlpatterns = [
 
     # Batch Operations
     path('batch/import', views.batchImportEmployees, name='batch-import'),
+
+    # Coming Soon routes (placeholders)
+    path('attendance/view', views.coming_soon, name='attendance_view'),
+    path('attendance/mark', views.coming_soon, name='attendance_mark'),
+    path('attendance/leaves', views.coming_soon, name='attendance_leaves'),
+    path('attendance/apply-leave', views.coming_soon, name='attendance_apply_leave'),
+    path('documents/upload', views.coming_soon, name='documents_upload'),
+    path('documents/dashboard', views.coming_soon, name='documents_dashboard'),
+    path('analytics/dashboard', views.coming_soon, name='analytics_dashboard'),
+    path('hr-tools/dashboard', views.coming_soon, name='hr_tools_dashboard'),
+    path('biometric/fingerprint', views.coming_soon, name='biometric_fingerprint'),
 ]

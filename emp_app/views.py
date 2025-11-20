@@ -1291,3 +1291,7 @@ def batchImportEmployees(request):
         return redirect('/employees')
 
     return render(request, 'batch/import.html')
+
+# Coming Soon placeholder views
+def coming_soon(request):
+    return render(request, 'coming_soon.html')
