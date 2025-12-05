@@ -293,3 +293,7 @@ class EmployeeDocument(models.Model):
             self.file_size = self.file.size
             self.file_type = self.file.name.split('.')[-1].lower()
         super().save(*args, **kwargs)
+
+
+# Import user models so Django can discover them
+from .user_models import CustomUser, UserActivity, LoginAttempt  # noqa: F401, E402
