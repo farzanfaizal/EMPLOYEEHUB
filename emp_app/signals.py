@@ -5,7 +5,7 @@ Auto-setup and user management
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.conf import settings
-from .user_models import CustomUser
+from .models import CustomUser
 import logging
 
 logger = logging.getLogger(__name__)
@@ -45,7 +45,7 @@ def setup_new_user(sender, instance, created, **kwargs):
 def log_user_creation(sender, instance, created, **kwargs):
     """Log user creation for audit purposes"""
     if created:
-        from .user_models import UserActivity
+        from .models import UserActivity
         try:
             UserActivity.objects.create(
                 user=instance,

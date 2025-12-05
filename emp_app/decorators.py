@@ -104,7 +104,7 @@ def log_activity(action_name):
 
             # Log the activity
             if request.user.is_authenticated:
-                from .user_models import UserActivity
+                from .models import UserActivity
                 try:
                     UserActivity.objects.create(
                         user=request.user,

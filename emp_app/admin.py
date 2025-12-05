@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from emp_app.user_models import CustomUser, UserActivity, LoginAttempt
 from emp_app.models import (
+    CustomUser, UserActivity, LoginAttempt,
     Role, Department, Employee, Attendance, Leave,
     FingerprintData, BiometricAttendance, DocumentCategory, EmployeeDocument
 )
