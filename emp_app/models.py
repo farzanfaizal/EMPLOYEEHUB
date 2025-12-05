@@ -1,38 +1,132 @@
 from django.db import models
+from django.core.validators import RegexValidator, MinValueValidator, MaxValueValidator
 
 # Create your models here.
 
 class Role(models.Model):
-    name = models.CharField(max_length=50, null=False)
-    
+    name = models.CharField(
+        max_length=50,
+        null=False,
+        unique=True,
+        help_text="Role name (e.g., Manager, Developer, HR)"
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['name']
+        verbose_name = 'Role'
+        verbose_name_plural = 'Roles'
+        indexes = [
+            models.Index(fields=['name']),
+        ]
+
     def __str__(self):
         return self.name
+
 
 class Department(models.Model):
-    name = models.CharField(max_length=50, null=False)
-    location = models.CharField(max_length=100)
+    name = models.CharField(
+        max_length=50,
+        null=False,
+        unique=True,
+        help_text="Department name"
+    )
+    location = models.CharField(
+        max_length=100,
+        help_text="Department location/office"
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['name']
+        verbose_name = 'Department'
+        verbose_name_plural = 'Departments'
+        indexes = [
+            models.Index(fields=['name']),
+            models.Index(fields=['location']),
+        ]
 
     def __str__(self):
         return self.name
 
+
 class Employee(models.Model):
+    phone_regex = RegexValidator(
+        regex=r'^\+?1?\d{9,15}$',
+        message="Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed."
+    )
+
     emp_id = models.AutoField(primary_key=True)
-    first_name = models.CharField(max_length=50, null=False)
-    last_name = models.CharField(max_length=50)
-    dept = models.ForeignKey(Department, on_delete=models.CASCADE)
-    salary = models.IntegerField(default=0)
-    bonus = models.IntegerField(default=0)
-    role = models.ForeignKey(Role, on_delete=models.CASCADE)
-    phone_num = models.BigIntegerField(default=0)
-    hire_date = models.DateField()
+    first_name = models.CharField(
+        max_length=50,
+        null=False,
+        help_text="Employee's first name"
+    )
+    last_name = models.CharField(
+        max_length=50,
+        help_text="Employee's last name"
+    )
+    dept = models.ForeignKey(
+        Department,
+        on_delete=models.PROTECT,  # Changed from CASCADE to PROTECT
+        related_name='employees',
+        help_text="Employee's department"
+    )
+    salary = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        default=0,
+        validators=[MinValueValidator(0)],
+        help_text="Monthly salary"
+    )
+    bonus = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        default=0,
+        validators=[MinValueValidator(0)],
+        help_text="Annual bonus"
+    )
+    role = models.ForeignKey(
+        Role,
+        on_delete=models.PROTECT,  # Changed from CASCADE to PROTECT
+        related_name='employees',
+        help_text="Employee's role"
+    )
+    phone_num = models.CharField(
+        max_length=15,
+        validators=[phone_regex],
+        blank=True,
+        help_text="Contact phone number"
+    )
+    hire_date = models.DateField(help_text="Date of hire")
+    is_active = models.BooleanField(default=True, help_text="Is employee currently active")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-hire_date', 'first_name']
+        verbose_name = 'Employee'
+        verbose_name_plural = 'Employees'
+        indexes = [
+            models.Index(fields=['first_name', 'last_name']),
+            models.Index(fields=['dept', 'role']),
+            models.Index(fields=['hire_date']),
+            models.Index(fields=['is_active']),
+        ]
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
-   
-class ccmployee(models.Model):
-    emp_id = models.AutoField(primary_key=True)
-    first_name = models.CharField(max_length=50, null=False)
-    last_name = models.CharField(max_length=50)
+
+    def get_full_name(self):
+        """Return the employee's full name."""
+        return f"{self.first_name} {self.last_name}"
+
+    def get_total_compensation(self):
+        """Calculate total annual compensation."""
+        return (self.salary * 12) + self.bonus
+
 
 class Attendance(models.Model):
     STATUS_CHOICES = [

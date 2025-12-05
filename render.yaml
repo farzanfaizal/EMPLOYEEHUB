@@ -1,0 +1,67 @@
+services:
+  # ===============================================
+  # Web Service - Django Application
+  # ===============================================
+  - type: web
+    name: employeehub
+    env: python
+    region: singapore
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn office_emp_mgmt_proj.wsgi:application"
+    plan: free
+
+    autoDeploy: true
+
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+
+      - key: SECRET_KEY
+        generateValue: true
+
+      - key: DEBUG
+        value: False
+
+      - key: USE_SQLITE
+        value: False
+
+      - key: DB_NAME
+        fromDatabase:
+          name: employeehub-db
+          property: database
+
+      - key: DB_USER
+        fromDatabase:
+          name: employeehub-db
+          property: user
+
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: employeehub-db
+          property: password
+
+      - key: DB_HOST
+        fromDatabase:
+          name: employeehub-db
+          property: host
+
+      - key: DB_PORT
+        fromDatabase:
+          name: employeehub-db
+          property: port
+
+      # Google OAuth (Add these manually in Render dashboard)
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+
+# ===============================================
+# Database - PostgreSQL
+# ===============================================
+databases:
+  - name: employeehub-db
+    databaseName: employeehub
+    plan: free
+    region: singapore

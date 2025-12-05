@@ -1,13 +1,23 @@
 from django.urls import path
-from emp_app import views
+from emp_app import views, account_views
 
 urlpatterns = [
+    # ==================== ACCOUNT MANAGEMENT ====================
+    path('profile/', account_views.profile, name='profile'),
+    path('profile/update/', account_views.update_profile, name='update-profile'),
+    path('profile/change-password/', account_views.change_password, name='change-password'),
+    path('settings/', account_views.settings, name='settings'),
+    path('activity-log/', account_views.activity_log, name='activity-log'),
+
+    # ==================== DASHBOARD ====================
     path('', views.index, name='index'),
-    path('all-emp', views.allEmp, name='all-emp'),
-    path('add-emp', views.addEmp, name='add-emp'),
-    path('remove-emp', views.removeEmp, name='remove-emp'),
-    path('remove-emp/<int:empID>', views.removeEmp, name='remove-emp'),
-    path('filter-emp', views.filterEmp, name='filter-emp'),
+
+    # ==================== EMPLOYEE MANAGEMENT ====================
+    path('all-emp/', views.allEmp, name='all-emp'),
+    path('add-emp/', views.addEmp, name='add-emp'),
+    path('remove-emp/', views.removeEmp, name='remove-emp'),
+    path('remove-emp/<int:empID>/', views.removeEmp, name='remove-emp'),
+    path('filter-emp/', views.filterEmp, name='filter-emp'),
     path('employees/', views.listEmployees, name='list_employees'),
     path('update-emp/<int:emp_id>/', views.updateEmp, name='update_emp'),
 
