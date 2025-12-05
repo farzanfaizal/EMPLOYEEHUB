@@ -20,6 +20,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
+
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get('SECRET_KEY')
 if not SECRET_KEY:
@@ -30,9 +33,6 @@ if not SECRET_KEY:
         # Development fallback only
         SECRET_KEY = 'django-insecure-dev-key-change-this-in-production'
         print("⚠️  WARNING: Using development SECRET_KEY")
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = [
     'localhost',            # Allow localhost
@@ -120,7 +120,7 @@ if USE_SQLITE:
         }
     }
 else:
-    # PostgreSQL - Production Database (Neon)
+    # PostgreSQL - Production Database (Neon with connection pooling)
     # All credentials must be set via environment variables
     DATABASES = {
         'default': {
@@ -132,10 +132,9 @@ else:
             'PORT': os.environ.get('DB_PORT', '5432'),
             'OPTIONS': {
                 'sslmode': 'require',
-                'options': '-c gss_enc_mode=disable',  # Neon compatibility
             },
             'CONN_MAX_AGE': 600,  # Connection pooling
-            'DISABLE_SERVER_SIDE_CURSORS': True,  # Required for pgBouncer pooling
+            'DISABLE_SERVER_SIDE_CURSORS': True,  # Required for Neon pooler
         }
     }
 
