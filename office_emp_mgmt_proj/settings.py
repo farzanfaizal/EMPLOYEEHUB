@@ -120,7 +120,7 @@ if USE_SQLITE:
         }
     }
 else:
-    # PostgreSQL - Production Database
+    # PostgreSQL - Production Database (Neon)
     # All credentials must be set via environment variables
     DATABASES = {
         'default': {
@@ -132,8 +132,10 @@ else:
             'PORT': os.environ.get('DB_PORT', '5432'),
             'OPTIONS': {
                 'sslmode': 'require',
+                'options': '-c gss_enc_mode=disable',  # Neon compatibility
             },
             'CONN_MAX_AGE': 600,  # Connection pooling
+            'DISABLE_SERVER_SIDE_CURSORS': True,  # Required for pgBouncer pooling
         }
     }
 
